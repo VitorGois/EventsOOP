@@ -2,6 +2,7 @@ package com.project.event.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.project.event.dtos.EventCreateDto;
 import com.project.event.dtos.EventDto;
@@ -42,6 +43,14 @@ public class EventService {
         return this.toDTOList(eventList);
     }
 
+    public EventDto getEventById(Long id) {
+        Optional<Event> opEvent = eventRepo.findById(id);
+
+        Event event = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        return new EventDto(event);
+    }
+
     private List<EventDto> toDTOList(List<Event> eventList) {
         List<EventDto> eventListDto = new ArrayList<>();
 
@@ -51,6 +60,6 @@ public class EventService {
         }
 
         return eventListDto;
-    }
+    }   
 
 }

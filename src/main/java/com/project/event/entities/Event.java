@@ -8,10 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.project.event.dtos.EventCreateDto;
 
 @Entity
+@Table(name = "TB_Event")
 public class Event implements Serializable {
     
     private static final long serialVersionUID = 1L;
