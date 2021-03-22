@@ -1,13 +1,15 @@
 package com.project.event.controllers;
 
 import java.net.URI;
+import java.util.List;
 
-import com.project.event.dtos.CreateEventDto;
-import com.project.event.dtos.ReadEventDto;
+import com.project.event.dtos.EventCreateDto;
+import com.project.event.dtos.EventDto;
 import com.project.event.services.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +23,15 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @GetMapping()
+    public ResponseEntity<List<EventDto>> getEvents() {
+        List<EventDto> eventList = this.eventService.readClients();
+        return ResponseEntity.ok(eventList);
+    }
+
     @PostMapping()
-    public ResponseEntity<ReadEventDto> createEvent(@RequestBody CreateEventDto newEvent) {
-        ReadEventDto eventDto = this.eventService.createEvent(newEvent);
+    public ResponseEntity<EventDto> postEvent(@RequestBody EventCreateDto newEvent) {
+        EventDto eventDto = this.eventService.createEvent(newEvent);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();
 

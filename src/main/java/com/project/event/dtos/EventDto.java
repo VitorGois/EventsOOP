@@ -2,23 +2,24 @@ package com.project.event.dtos;
 
 import com.project.event.entities.Event;
 
-public class ReadEventDto {
+public class EventDto {
     
-    private String id;
+    private Long id;
     private String name;
     private String description;
     private String place;
     
-    public ReadEventDto(Event eventEntity) {
+    public EventDto(Event eventEntity) {
+        this.id = eventEntity.getId();
         this.name = eventEntity.getName();
         this.description = eventEntity.getDescription();
         this.place = eventEntity.getPlace();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

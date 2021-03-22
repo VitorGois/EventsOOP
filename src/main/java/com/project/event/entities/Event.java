@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.project.event.dtos.CreateEventDto;
+import com.project.event.dtos.EventCreateDto;
 
 @Entity
 public class Event implements Serializable {
@@ -29,8 +29,11 @@ public class Event implements Serializable {
     private LocalDate endDate;
     private LocalTime startTime;
     private LocalTime endTime;   
-
-    public Event(CreateEventDto newEvent) {
+    
+    public Event() {
+    }
+    
+    public Event(EventCreateDto newEvent) {
         this.name = newEvent.getName();
         this.description = newEvent.getDescription();
         this.place = newEvent.getPlace();
@@ -112,5 +115,6 @@ public class Event implements Serializable {
     public void setEmailContact(String emailContact) {
         this.emailContact = emailContact;
     }
+
 
 }

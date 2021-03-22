@@ -1,7 +1,10 @@
 package com.project.event.services;
 
-import com.project.event.dtos.CreateEventDto;
-import com.project.event.dtos.ReadEventDto;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.project.event.dtos.EventCreateDto;
+import com.project.event.dtos.EventDto;
 import com.project.event.entities.Event;
 import com.project.event.repositories.EventRepository;
 
@@ -17,13 +20,13 @@ public class EventService {
     private EventRepository eventRepo;
     
 
-    public ReadEventDto createEvent(CreateEventDto newEvent) {
+    public EventDto createEvent(EventCreateDto newEvent) {
         if (newEvent.getEndDate().isAfter(newEvent.getStartDate()) && newEvent.getEndTime().isAfter(newEvent.getStartTime())) {
             Event eventEntity = new Event(newEvent);
 
             try {
                 eventEntity = this.eventRepo.save(eventEntity);
-                return new ReadEventDto(eventEntity);           
+                return new EventDto(eventEntity);           
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the event on the database");
             }
@@ -31,6 +34,23 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "End date or time before initial.");
         }
         
+    }
+
+    public List<EventDto> readClients() {
+        List<Event> eventList = this.eventRepo.findAll();
+
+        return this.toDTOList(eventList);
+    }
+
+    private List<EventDto> toDTOList(List<Event> eventList) {
+        List<EventDto> eventListDto = new ArrayList<>();
+
+        for(Event e : eventList) {
+            EventDto eventDto = new EventDto(e);
+            eventListDto.add(eventDto);
+        }
+
+        return eventListDto;
     }
 
 }

@@ -3,7 +3,7 @@ package com.project.event.dtos;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class CreateEventDto {
+public class EventCreateDto {
     
     private String name;
     private String description;
