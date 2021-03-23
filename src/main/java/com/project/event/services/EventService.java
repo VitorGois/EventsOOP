@@ -10,6 +10,7 @@ import com.project.event.entities.Event;
 import com.project.event.repositories.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,6 +52,14 @@ public class EventService {
         return new EventDto(event);
     }
 
+    public void removeEvent(Long id) {
+        try {
+            this.eventRepo.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        }
+    }
+
     private List<EventDto> toDTOList(List<Event> eventList) {
         List<EventDto> eventListDto = new ArrayList<>();
 
@@ -60,6 +69,7 @@ public class EventService {
         }
 
         return eventListDto;
-    }   
+    }
+
 
 }
