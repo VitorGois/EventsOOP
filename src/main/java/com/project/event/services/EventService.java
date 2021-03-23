@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import com.project.event.dtos.EventCreateDto;
 import com.project.event.dtos.EventDto;
+import com.project.event.dtos.EventUpdateDto;
 import com.project.event.entities.Event;
 import com.project.event.repositories.EventRepository;
 
@@ -60,6 +63,26 @@ public class EventService {
         }
     }
 
+    public EventDto updateEvent(Long id, EventUpdateDto updateEvent) {
+        try {
+            if (updateEvent.getEndDate().isAfter(updateEvent.getStartDate()) && updateEvent.getEndTime().isAfter(updateEvent.getStartTime())) {
+                Event event = this.eventRepo.getOne(id);
+
+                event.setStartDate(updateEvent.getStartDate());
+                event.setEndDate(updateEvent.getEndDate());
+                event.setStartTime(updateEvent.getStartTime());
+                event.setEndTime(updateEvent.getEndTime());
+                event = this.eventRepo.save(event);
+                
+                return new EventDto(event);
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "End date or time before initial.");
+            }
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        }
+    }
+
     private List<EventDto> toDTOList(List<Event> eventList) {
         List<EventDto> eventListDto = new ArrayList<>();
 
@@ -70,6 +93,5 @@ public class EventService {
 
         return eventListDto;
     }
-
 
 }

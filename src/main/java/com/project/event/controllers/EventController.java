@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.project.event.dtos.EventCreateDto;
 import com.project.event.dtos.EventDto;
+import com.project.event.dtos.EventUpdateDto;
 import com.project.event.services.EventService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,9 +48,16 @@ public class EventController {
         return ResponseEntity.created(uri).body(eventDto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<EventDto> updateEvent(@RequestBody EventUpdateDto updateEvent, @PathVariable Long id) {
+        EventDto eventDto = this.eventService.updateEvent(id, updateEvent);
+        return ResponseEntity.ok().body(eventDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         this.eventService.removeEvent(id);
         return ResponseEntity.noContent().build();
     }
+
 }
