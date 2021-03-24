@@ -38,5 +38,4 @@ public class EventUpdateDto {
         this.endTime = endTime;
     } 
 
-    
 }
