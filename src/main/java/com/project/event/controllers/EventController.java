@@ -51,7 +51,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> updateEvent(@RequestBody EventUpdateDto updateEvent, @PathVariable Long id) {
+    public ResponseEntity<EventDto> updateEvent(@RequestBody @Valid EventUpdateDto updateEvent, @PathVariable Long id) {
         EventDto eventDto = this.eventService.updateEvent(id, updateEvent);
         return ResponseEntity.ok().body(eventDto);
     }
