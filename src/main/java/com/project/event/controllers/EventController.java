@@ -3,6 +3,8 @@ package com.project.event.controllers;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import com.project.event.dtos.EventCreateDto;
 import com.project.event.dtos.EventDto;
 import com.project.event.dtos.EventUpdateDto;
@@ -40,7 +42,7 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<EventDto> postEvent(@RequestBody EventCreateDto newEvent) {
+    public ResponseEntity<EventDto> postEvent(@RequestBody @Valid EventCreateDto newEvent) {
         EventDto eventDto = this.eventService.createEvent(newEvent);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();

@@ -3,16 +3,39 @@ package com.project.event.dtos;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class EventCreateDto {
     
+    @NotBlank(message = "Name must be informed")
+    @Size(min=5, message = "Must contain at least 5 characters")
     private String name;
+    
+    @NotBlank(message = "Description must be informed")
+    @Size(min=5, message = "Must contain at least 5 characters")
     private String description;
+    
+    @NotBlank(message = "Place must be informed")
+    @Size(min=5, message = "Must contain at least 5 characters")
     private String place;
+    
+    @Email()
     private String emailContact;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate startDate;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate endDate;
+
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
+
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     
