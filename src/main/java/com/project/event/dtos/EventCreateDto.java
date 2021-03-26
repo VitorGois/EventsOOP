@@ -14,7 +14,7 @@ public class EventCreateDto {
     @NotBlank(message = "Name must be informed")
     @Size(min=5, message = "Must contain at least 5 characters")
     private String name;
-    
+
     @NotBlank(message = "Description must be informed")
     @Size(min=5, message = "Must contain at least 5 characters")
     private String description;
