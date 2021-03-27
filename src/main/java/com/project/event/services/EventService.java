@@ -1,7 +1,6 @@
 package com.project.event.services;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,6 +13,8 @@ import com.project.event.repositories.EventRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,17 +42,17 @@ public class EventService {
         
     }
 
-    public List<EventDto> readClients() {
-        List<Event> eventList = this.eventRepo.findAll();
-
-        return this.toDTOList(eventList);
+    public Page<EventDto> readClients(PageRequest pageRequest, String name, String description, String place, LocalDate startDate) {
+        Page<Event> eventList = this.eventRepo.find(pageRequest, name, description, place, startDate);
+        
+        return eventList.map(event -> new EventDto(event));
     }
 
     public EventDto getEventById(Long id) {
         Optional<Event> opEvent = eventRepo.findById(id);
-
+        
         Event event = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-
+        
         return new EventDto(event);
     }
 
@@ -81,17 +82,6 @@ public class EventService {
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         }
-    }
-
-    private List<EventDto> toDTOList(List<Event> eventList) {
-        List<EventDto> eventListDto = new ArrayList<>();
-
-        for(Event e : eventList) {
-            EventDto eventDto = new EventDto(e);
-            eventListDto.add(eventDto);
-        }
-
-        return eventListDto;
     }
 
 }
