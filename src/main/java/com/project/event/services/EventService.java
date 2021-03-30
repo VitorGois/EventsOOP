@@ -66,7 +66,7 @@ public class EventService {
 
     public EventDto updateEvent(Long id, EventUpdateDto updateEvent) {
         try {
-            if (verifyDateAndTime(updateEvent.getEndDate(), updateEvent.getStartDate(), updateEvent.getEndTime(), updateEvent.getStartTime())) {
+            if (verifyDateAndTime(updateEvent.getStartDate(), updateEvent.getEndDate(), updateEvent.getStartTime(), updateEvent.getEndTime())) {
                 Event event = this.eventRepo.getOne(id);
 
                 event.setStartDate(updateEvent.getStartDate());
