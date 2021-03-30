@@ -1,6 +1,7 @@
 package com.project.event.services;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,28 +28,27 @@ public class EventService {
     
 
     public EventDto createEvent(EventCreateDto newEvent) {
-        if (newEvent.getEndDate().isAfter(newEvent.getStartDate()) && newEvent.getEndTime().isAfter(newEvent.getStartTime())) {
-            Event eventEntity = new Event(newEvent);
-
+        Event eventEntity = new Event(newEvent); 
+        if (verifyDateAndTime(newEvent.getStartDate(), newEvent.getEndDate(), newEvent.getStartTime(), newEvent.getEndTime())) {
             try {
                 eventEntity = this.eventRepo.save(eventEntity);
                 return new EventDto(eventEntity);           
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the event on the database");
-            }
+            }          
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "End date or time before initial.");
         }
         
     }
 
-    public Page<EventDto> readClients(PageRequest pageRequest, String name, String description, String place, LocalDate startDate) {
+    public Page<EventDto> readEvents(PageRequest pageRequest, String name, String description, String place, LocalDate startDate) {
         Page<Event> eventList = this.eventRepo.find(pageRequest, name, description, place, startDate);
         
         return eventList.map(event -> new EventDto(event));
     }
 
-    public EventDto getEventById(Long id) {
+    public EventDto readEventById(Long id) {
         Optional<Event> opEvent = eventRepo.findById(id);
         
         Event event = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
@@ -66,7 +66,7 @@ public class EventService {
 
     public EventDto updateEvent(Long id, EventUpdateDto updateEvent) {
         try {
-            if (updateEvent.getEndDate().isAfter(updateEvent.getStartDate()) && updateEvent.getEndTime().isAfter(updateEvent.getStartTime())) {
+            if (verifyDateAndTime(updateEvent.getEndDate(), updateEvent.getStartDate(), updateEvent.getEndTime(), updateEvent.getStartTime())) {
                 Event event = this.eventRepo.getOne(id);
 
                 event.setStartDate(updateEvent.getStartDate());
@@ -81,6 +81,17 @@ public class EventService {
             }
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        }
+    }
+
+    private Boolean verifyDateAndTime(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        if (endDate.equals(startDate) && endTime.isAfter(startTime)) {
+            return true;
+        }
+        else if (endDate.isAfter(startDate)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
