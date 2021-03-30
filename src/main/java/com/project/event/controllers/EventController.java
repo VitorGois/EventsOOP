@@ -43,7 +43,7 @@ public class EventController {
         @RequestParam(value = "name", defaultValue = "") String name,
         @RequestParam(value = "description", defaultValue = "") String description,
         @RequestParam(value = "place", defaultValue = "") String place,
-        @RequestParam(value = "startDate", defaultValue = "#{t(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
+        @RequestParam(value = "startDate", defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
         ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         Page<EventDto> eventList = this.eventService.readEvents(pageRequest, name, description, place, startDate);
