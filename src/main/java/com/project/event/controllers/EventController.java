@@ -41,18 +41,18 @@ public class EventController {
         @RequestParam(value = "direction", defaultValue = "ASC") String direction,
         @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
         @RequestParam(value = "name", defaultValue = "") String name,
-        @RequestParam(value = "decription", defaultValue = "") String description,
+        @RequestParam(value = "description", defaultValue = "") String description,
         @RequestParam(value = "place", defaultValue = "") String place,
-        @RequestParam(value = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
+        @RequestParam(value = "startDate", defaultValue = "#{t(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
         ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-        Page<EventDto> eventList = this.eventService.readClients(pageRequest, name, description, place, startDate);
+        Page<EventDto> eventList = this.eventService.readEvents(pageRequest, name, description, place, startDate);
         return ResponseEntity.ok(eventList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEventById(@PathVariable() Long id) {
-        EventDto dto = this.eventService.getEventById(id);
+        EventDto dto = this.eventService.readEventById(id);
         return ResponseEntity.ok(dto);
     }
 
