@@ -18,6 +18,17 @@ Develop a system to control events.
 
 ## ☑️Todo list
 - [ ] Build UML diagram
+- [x] Create and configure profile: Prod, Dev, Test
+- [x] Connect repository with Heroku
+- [ ] Create user CRUD
+- [ ] Create administrator user CRUD
+- [ ] Create participating user CRUD
+- [ ] Create place CRUD
+- [ ] Create event CRUD
+- [ ] Create ticket CRUD
+- [ ] Insert mock data
+- [ ] Handle application errors
+- [ ] Authentication and Authorization (Soon)
 
 ## 🚀 Application Endpoints
 | **Endpoints**            | **Verbs Supported**       | **Description**                                                     | **Status**    |
