@@ -15,9 +15,8 @@ Develop a system to control events.
 - A participant will be able to register (purchase tickets) in any registered event, respecting the limit of participants for each event or the date of the event. It is not possible to purchase a ticket for an event that occurred in the past.
 - There are two types of tickets: Paid and Free. A paid ticket must have the amount paid at the time of purchase. The value of the paid ticket can be changed at any time. However, the values ​​of paid tickets already sold should not be changed. Store the date of sale of tickets and if a ticket is removed / returned, it can be sold again for the event. The amount of the ticket paid will be used as a balance for the participant who purchased the ticket. It will not be possible to remove / return a ticket from the event's start date.
 
-
 ## ☑️Todo list
-- [ ] Build UML diagram
+- [x] Build UML diagram
 - [x] Create and configure profile: Prod, Dev, Test
 - [x] Connect repository with Heroku
 - [ ] Create user CRUD
@@ -29,6 +28,11 @@ Develop a system to control events.
 - [ ] Insert mock data
 - [ ] Handle application errors
 - [ ] Authentication and Authorization (Soon)
+
+## UML
+<p align="center">
+  <img width="600" height="900" src="https://github.com/VitorGois/EventsOOP/blob/master/mc.png">
+</p>
 
 ## 🚀 Application Endpoints
 | **Endpoints**            | **Verbs Supported**       | **Description**                                                     | **Status**    |
