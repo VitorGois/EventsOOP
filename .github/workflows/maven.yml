@@ -33,8 +33,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     
-    - name: Deploy Heroku
-    - uses: actions/checkout@v2
+    - name: Heroku Action
     - uses: CDNievas/heroku-action@v1.0 # This is the action
       with:
         heroku_email: "vitorcgois777@gmail.com"
