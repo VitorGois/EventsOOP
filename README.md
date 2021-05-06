@@ -25,6 +25,7 @@ Develop a system to control events.
 - [ ] Create place CRUD
 - [ ] Create event CRUD
 - [ ] Create ticket CRUD
+- [ ] Validate business rules
 - [ ] Insert mock data
 - [ ] Handle application errors
 - [ ] Authentication and Authorization (Soon)
@@ -44,3 +45,21 @@ Develop a system to control events.
 | /events/{id}/places/{id} | `POST e DELETE`           | Associate or remove a location with an event                        | *Soon*        |
 | /events/{id}/tickets     | `GET`                     | Returns the list of tickets for an event, type and the participants | *Soon*        |
 | /events/{id}/tickets     | `POST e DELETE`           | Sell a ticket to an event and make the return                       | *Soon*        |
+
+## 🛎️JSON Body Examples (POST)
+### 🕴️ Admin
+```
+JSON here
+```
+### 👨‍👩‍👦‍👦 Attendees
+```
+JSON here
+```
+### 📍 Places
+```
+JSON here
+```
+### 🎫 Events
+```
+JSON here
+```
