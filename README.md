@@ -17,7 +17,7 @@ Develop a system to control events.
 
 ## ☑️Todo list
 - [x] Build UML diagram
-- [x] Create and configure profile: Prod, Dev, Test
+- [x] Create and configure profile: Prod | Dev | Test
 - [x] Connect repository with Heroku
 - [ ] Create user CRUD
 - [ ] Create administrator user CRUD
