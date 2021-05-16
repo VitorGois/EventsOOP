@@ -52,7 +52,6 @@ public class Event implements Serializable {
     )
     @Setter(AccessLevel.NONE) private List<Place> places = new ArrayList<>();
 
-
     public void addPlace(Place place) {
         this.places.add(place);
     }
