@@ -16,7 +16,7 @@ import java.time.Instant;
 public class Ticket implements Serializable {
 
     enum TicketType {
-        FREE('F'), PAID('P');
+        FREE('0'), PAID('1');
 
         private char value;
 
