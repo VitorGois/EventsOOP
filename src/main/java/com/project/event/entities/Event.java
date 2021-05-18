@@ -1,5 +1,6 @@
 package com.project.event.entities;
 
+import com.project.event.dtos.event.EventInsertDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,7 +43,7 @@ public class Event implements Serializable {
     private Admin admin;
 
     @OneToMany(mappedBy = "event")
-    private List<Ticket> tickets = new ArrayList<>();
+    @Setter(AccessLevel.NONE) private List<Ticket> tickets = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -52,8 +53,25 @@ public class Event implements Serializable {
     )
     @Setter(AccessLevel.NONE) private List<Place> places = new ArrayList<>();
 
+    public Event(EventInsertDto eventInsertDto) {
+        this.name = eventInsertDto.getName();
+        this.description = eventInsertDto.getDescription();
+        this.startDate = eventInsertDto.getStartDate();
+        this.endDate = eventInsertDto.getEndDate();
+        this.startTime = eventInsertDto.getStartTime();
+        this.endTime = eventInsertDto.getEndTime();
+        this.emailContact = eventInsertDto.getEmailContact();
+        this.amountFreeTickets = eventInsertDto.getAmountFreeTickets();
+        this.amountPayedTickets = eventInsertDto.getAmountPayedTickets();
+        this.priceTicket = eventInsertDto.getPriceTicket();
+    }
+
     public void addPlace(Place place) {
         this.places.add(place);
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
     }
 
 }

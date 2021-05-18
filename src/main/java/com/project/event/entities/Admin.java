@@ -17,10 +17,6 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Admin extends BaseUser {
 
-    @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long adminId;
-
     @NonNull private String phoneNumber;
 
     @OneToMany(mappedBy = "admin")

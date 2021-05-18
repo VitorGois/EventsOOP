@@ -47,9 +47,12 @@ public class AdminService {
 
     public AdminDto updateAdmin(Long id, AdminUpdateDto adminUpdateDto) {
         try {
-            Admin admin = this.adminRepository.getOne(id);
-            admin.setEmail(adminUpdateDto.getEmail());
-            return new AdminDto(admin);
+            Admin adminEntity = this.adminRepository.getOne(id);
+
+            adminEntity.setEmail(adminUpdateDto.getEmail());
+            adminEntity = this.adminRepository.save(adminEntity);
+
+            return new AdminDto(adminEntity);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         }

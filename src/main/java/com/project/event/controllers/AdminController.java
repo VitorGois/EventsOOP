@@ -51,13 +51,13 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminDto> updateAdmin(@RequestBody AdminUpdateDto adminUpdateDto, @PathVariable Long id) {
+    public ResponseEntity<AdminDto> putAdmin(@RequestBody() AdminUpdateDto adminUpdateDto, @PathVariable() Long id) {
         AdminDto adminDto = this.adminService.updateAdmin(id, adminUpdateDto);
         return ResponseEntity.ok().body(adminDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AdminDto> removeAdmin(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAdmin(@PathVariable() Long id) {
         this.adminService.removeAdmin(id);
         return ResponseEntity.noContent().build();
     }
