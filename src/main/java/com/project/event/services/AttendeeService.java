@@ -11,7 +11,6 @@ import com.project.event.entities.Attendee;
 import com.project.event.repositories.AttendeeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +40,7 @@ public class AttendeeService {
         try{
             Attendee entity = atRepository.getOne(id);
             entity.setEmail(updateDTO.getEmail());
+            entity = this.atRepository.save(entity);
             return new AttendeeDTO(entity);
 
         }
