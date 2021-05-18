@@ -38,7 +38,7 @@ public class Event implements Serializable {
     @NonNull private Long amountPayedTickets;
     @NonNull private Double priceTicket;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "admin_id")
     private Admin admin;
 

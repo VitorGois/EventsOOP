@@ -43,7 +43,6 @@ public class EventService {
     public EventDto createEvent(EventInsertDto eventInsertDto) {
         Admin adminEntity = adminRepository.getOne(eventInsertDto.getAdminId());
         Event eventEntity = new Event(eventInsertDto);
-        adminEntity.addEvent(eventEntity);
         eventEntity.setAdmin(adminEntity);
 
         this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(), eventInsertDto.getStartTime(), eventInsertDto.getEndTime());
@@ -57,8 +56,9 @@ public class EventService {
     }
 
     public EventDto updateEvent(Long id, EventUpdateDto eventUpdateDto) {
+        this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(), eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
+
         try {
-            this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(), eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
             Event eventEntity = this.eventRepository.getOne(id);
 
             eventEntity.setStartDate(eventUpdateDto.getStartDate());

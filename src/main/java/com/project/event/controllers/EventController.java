@@ -3,7 +3,6 @@ package com.project.event.controllers;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
-import com.project.event.entities.Event;
 import com.project.event.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 
@@ -48,14 +48,14 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<EventDto> postEvent(@RequestBody() EventInsertDto eventInsertDto) {
+    public ResponseEntity<EventDto> postEvent(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
         EventDto eventDto = this.eventService.createEvent(eventInsertDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();
         return ResponseEntity.created(uri).body(eventDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> putEvent(@RequestBody() EventUpdateDto eventUpdateDto, @PathVariable() Long id) {
+    public ResponseEntity<EventDto> putEvent(@Valid() @RequestBody() EventUpdateDto eventUpdateDto, @PathVariable() Long id) {
         EventDto eventDto = this.eventService.updateEvent(id, eventUpdateDto);
         return ResponseEntity.ok().body(eventDto);
     }

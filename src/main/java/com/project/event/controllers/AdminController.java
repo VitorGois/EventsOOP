@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @Controller
@@ -44,14 +45,14 @@ public class AdminController {
     }
 
     @PostMapping()
-    public ResponseEntity<AdminDto> postAdmin(@RequestBody() AdminInsertDto adminInsertDto) {
+    public ResponseEntity<AdminDto> postAdmin(@Valid() @RequestBody() AdminInsertDto adminInsertDto) {
         AdminDto adminDto = this.adminService.createAdmin(adminInsertDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(adminDto.getId()).toUri();
         return ResponseEntity.created(uri).body(adminDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminDto> putAdmin(@RequestBody() AdminUpdateDto adminUpdateDto, @PathVariable() Long id) {
+    public ResponseEntity<AdminDto> putAdmin(@Valid() @RequestBody() AdminUpdateDto adminUpdateDto, @PathVariable() Long id) {
         AdminDto adminDto = this.adminService.updateAdmin(id, adminUpdateDto);
         return ResponseEntity.ok().body(adminDto);
     }
