@@ -36,8 +36,8 @@ public class EventService {
 
     public EventDto readEventById(Long id) {
         Optional<Event> opEvent = eventRepository.findById(id);
-        Event event = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        return new EventDto(event);
+        Event eventEntity = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        return new EventDto(eventEntity);
     }
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {

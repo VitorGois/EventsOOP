@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,7 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 
-@Controller
+@RestController()
 @RequestMapping("/events")
 public class EventController {
 
@@ -47,7 +46,7 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<EventDto> postEvent(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
+    public ResponseEntity<EventDto> postEventDtoResponseEntity(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
         EventDto eventDto = this.eventService.createEvent(eventInsertDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();
         return ResponseEntity.created(uri).body(eventDto);

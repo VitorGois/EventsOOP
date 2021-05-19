@@ -21,8 +21,8 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
-    public Page<AdminDto> readAdminList(PageRequest pageRequest, String name, String email) {
-        Page<Admin> adminList = this.adminRepository.find(pageRequest, name, email);
+    public Page<AdminDto> readAdminList(PageRequest pageRequest) {
+        Page<Admin> adminList = this.adminRepository.find(pageRequest);
 
         return adminList.map(admin -> new AdminDto(admin));
     }

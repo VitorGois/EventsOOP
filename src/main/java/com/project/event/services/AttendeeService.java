@@ -1,15 +1,10 @@
 package com.project.event.services;
 
-import java.util.Optional;
-
-import javax.persistence.EntityNotFoundException;
-
 import com.project.event.dtos.attendee.AttendeeDTO;
 import com.project.event.dtos.attendee.AttendeeInsertDTO;
 import com.project.event.dtos.attendee.AttendeeUpdateDTO;
 import com.project.event.entities.Attendee;
 import com.project.event.repositories.AttendeeRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -18,53 +13,58 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
+
 @Service
 public class AttendeeService {
 
     @Autowired
-    private AttendeeRepository atRepository;
+    private AttendeeRepository attendeeRepository;
 
-
-    public Page<AttendeeDTO> getAttendees(PageRequest pageRequest, String name, String email) {
-       Page<Attendee> atList = this.atRepository.find(pageRequest, name, email);
-       return atList.map(at -> new AttendeeDTO(at));
+    public Page<AttendeeDTO> readAttendeeList(PageRequest pageRequest) {
+        Page<Attendee> atList = this.attendeeRepository.find(pageRequest);
+        return atList.map(at -> new AttendeeDTO(at));
     }
-    public AttendeeDTO getAttendeeById(Long Id){
-        Optional<Attendee>  op =  atRepository.findById(Id);
-   
-        Attendee at = op.orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Attendee not found"));
-   
-        return new AttendeeDTO(at);
-       }
-    public AttendeeDTO update(Long id, AttendeeUpdateDTO updateDTO) {
-        try{
-            Attendee entity = atRepository.getOne(id);
-            entity.setEmail(updateDTO.getEmail());
-            entity = this.atRepository.save(entity);
-            return new AttendeeDTO(entity);
 
-        }
-        catch(EntityNotFoundException ex){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Attendee not found");
-        }
+    public AttendeeDTO readAttendeeById(Long Id) {
+        Optional<Attendee> opAttendee = attendeeRepository.findById(Id);
+        Attendee attendeeEntity = opAttendee.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+        return new AttendeeDTO(attendeeEntity);
     }
-    public void delete(Long id) {
-        try{
-            atRepository.deleteById(id);
-        }
-        catch(EmptyResultDataAccessException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Attendee not found");
 
-        }
-    }
-    public AttendeeDTO insert(AttendeeInsertDTO newAttendee){
-        Attendee atEntity = new Attendee(newAttendee);
+    public AttendeeDTO createAttendee(AttendeeInsertDTO attendeeInsertDTO) {
+        Attendee attendeeEntity = new Attendee(attendeeInsertDTO);
+
         try {
-            atEntity = this.atRepository.save(atEntity);
-            return new AttendeeDTO(atEntity);
+            attendeeEntity = this.attendeeRepository.save(attendeeEntity);
+            return new AttendeeDTO(attendeeEntity);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the attendee on the database");
         }
     }
+
+    public AttendeeDTO updateAttendee(Long id, AttendeeUpdateDTO attendeeUpdateDTO) {
+        try {
+            Attendee attendeeEntity = attendeeRepository.getOne(id);
+
+            attendeeEntity.setEmail(attendeeUpdateDTO.getEmail());
+            attendeeEntity = this.attendeeRepository.save(attendeeEntity);
+
+            return new AttendeeDTO(attendeeEntity);
+
+        } catch (EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
+        }
+    }
+
+    public void removeAttendee(Long id) {
+        try {
+            this.attendeeRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
+        }
+    }
+
 }
 
