@@ -1,7 +1,6 @@
 package com.project.event.entities;
 
 import com.project.event.dtos.admin.AdminInsertDto;
-import com.project.event.dtos.admin.AdminUpdateDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,7 +18,7 @@ public class Admin extends BaseUser {
 
     @NonNull private String phoneNumber;
 
-    @OneToMany(mappedBy = "admin")
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.REMOVE)
     @NonNull @Setter(AccessLevel.NONE) private List<Event> events = new ArrayList<>();
 
     public Admin(@NonNull String name, @NonNull String email, @NonNull String phoneNumber) {

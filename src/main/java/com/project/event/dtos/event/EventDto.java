@@ -1,7 +1,6 @@
 package com.project.event.dtos.event;
 
 import com.project.event.entities.Event;
-import com.project.event.entities.Place;
 import lombok.Data;
 
 import java.time.LocalDate;

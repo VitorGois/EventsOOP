@@ -29,8 +29,8 @@ public class EventService {
     @Autowired
     private AdminRepository adminRepository;
 
-    public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description, String address) {
-        Page<Event> eventList = this.eventRepository.find(pageRequest, name, description, address);
+    public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description) {
+        Page<Event> eventList = this.eventRepository.find(pageRequest, name, description);
         return eventList.map(event -> new EventDto(event));
     }
 
@@ -68,6 +68,8 @@ public class EventService {
             eventEntity.setAmountFreeTickets(eventUpdateDto.getAmountFreeTickets());
             eventEntity.setAmountPayedTickets(eventUpdateDto.getAmountPayedTickets());
             eventEntity.setPriceTicket(eventUpdateDto.getPriceTicket());
+            eventEntity = this.eventRepository.save(eventEntity);
+
             return new EventDto(eventEntity);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
