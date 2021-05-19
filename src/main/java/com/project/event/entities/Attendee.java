@@ -3,6 +3,9 @@ package com.project.event.entities;
 import lombok.*;
 
 import javax.persistence.*;
+
+import com.project.event.dtos.attendee.AttendeeInsertDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,5 +30,9 @@ public class Attendee extends BaseUser {
     public Attendee(@NonNull String name, @NonNull String email, Double balance) {
         super(name, email);
         this.balance = balance;
+    }
+    public Attendee(AttendeeInsertDTO newAttendee){
+        super(newAttendee.getName(),newAttendee.getEmail());
+        this.balance = newAttendee.getBalance();
     }
 }

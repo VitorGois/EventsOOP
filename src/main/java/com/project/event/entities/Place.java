@@ -3,6 +3,9 @@ package com.project.event.entities;
 import lombok.*;
 
 import javax.persistence.*;
+
+import com.project.event.dtos.place.PlaceInsertDTO;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,11 @@ public class Place implements Serializable {
 
     public void addEvent(Event event) {
         this.events.add(event);
+    }
+
+    public Place(PlaceInsertDTO newPlace){
+        this.name=newPlace.getName();
+        this.address = newPlace.getAddress();
     }
 
 }
