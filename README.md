@@ -108,7 +108,7 @@ STATUS: 201 Created
 {
 	"adminId": 1,
 	"name": "Rock in Rio",
-	"description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje, levando em conta que se tornou um dos maiores festivais de rock’n’roll do mundo.",
+	"description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje.",
 	"startDate": "2022-08-02",
 	"endDate": "2022-08-11",
 	"startTime": "00:00:00",
@@ -125,7 +125,7 @@ STATUS: 201 Created
 {
   "id": 4,
   "name": "Rock in Rio",
-  "description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje, levando em conta que se tornou um dos maiores festivais de rock’n’roll do mundo.",
+  "description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje.",
   "startDate": "2022-08-02",
   "endDate": "2022-08-11",
   "startTime": "00:00:00",
