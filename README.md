@@ -19,14 +19,13 @@ Develop a system to control events.
 - [x] Build UML diagram
 - [x] Create and configure profile: Prod | Dev | Test
 - [x] Connect repository with Heroku
-- [ ] Create user CRUD
-- [ ] Create administrator user CRUD
-- [ ] Create participating user CRUD
-- [ ] Create place CRUD
-- [ ] Create event CRUD
+- [x] Create administrator user CRUD
+- [x] Create participating user CRUD
+- [x] Create place CRUD
+- [x] Create event CRUD
 - [ ] Create ticket CRUD
 - [ ] Validate business rules
-- [ ] Insert mock data
+- [x] Insert mock data
 - [ ] Handle application errors
 - [ ] Authentication and Authorization (Soon)
 
