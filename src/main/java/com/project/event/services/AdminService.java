@@ -64,4 +64,5 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         }
     }
+
 }

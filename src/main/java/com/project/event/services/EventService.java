@@ -93,4 +93,5 @@ public class EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end time must be later than the start time.");
         }
     }
+
 }

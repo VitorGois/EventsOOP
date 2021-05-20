@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AttendeeUpdateDTO {
+
     private String email;
 
 }
