@@ -16,7 +16,7 @@ import java.time.Instant;
 public class Ticket implements Serializable {
 
     enum TicketType {
-        FREE('0'), PAID('1');
+        FREE('F'), PAID('P');
 
         private char value;
 
@@ -37,7 +37,7 @@ public class Ticket implements Serializable {
     @Id
     private Long id;
 
-    @NonNull private TicketType type;
+    @NonNull @Enumerated(EnumType.STRING) private TicketType type;
     @NonNull private Instant date;
     @NonNull private Double price;
 

@@ -14,7 +14,6 @@ public class AttendeeDTO {
 
 public AttendeeDTO (Attendee atEntity){
     this.id = atEntity.getId();
-    this.attendeeId = atEntity.getAttendeeId();
     this.name = atEntity.getName();
     this.email = atEntity.getEmail();
     this.balance=atEntity.getBalance();

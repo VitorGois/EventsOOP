@@ -18,10 +18,6 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "USER_ID")
 public class Attendee extends BaseUser {
 
-    @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long attendeeId;
-
     @NonNull private Double balance;
 
     @OneToMany(mappedBy = "attendee")
