@@ -47,19 +47,92 @@ Develop a system to control events.
 
 ## 🛎️JSON Body Examples (POST)
 ### 🕴️ Admin
+<b>Input data:</b>
 ```
-JSON here
+{
+	"name": "Caio Marcelo Arthur da Mota",
+	"email": "caio.mota@focusnetworks.com.br",
+	"phoneNumber": "(75) 98956-5296"
+}
+```
+<b>Expected response:</b>
+```
+STATUS: 201 Created
+{
+  "id": 7,
+  "name": "Caio Marcelo Arthur da Mota",
+  "email": "caio.mota@focusnetworks.com.br",
+  "phoneNumber": "(75) 98956-5296"
+}
 ```
 ### 👨‍👩‍👦‍👦 Attendees
+<b>Input data:</b>
 ```
-JSON here
+{
+	"name": "Tomás Theo Luan da Silva",
+	"email": "tomas.silva@mail.com",
+	"balance": 429.0
+}
+```
+<b>Expected response:</b>
+```
+STATUS: 201 Created
+{
+  "id": 8,
+  "attendeeId": null,
+  "name": "Tomás Theo Luan da Silva",
+  "email": "tomas.silva@mail.com",
+  "balance": 429.0
+}
 ```
 ### 📍 Places
+<b>Input data:</b>
 ```
-JSON here
+{
+	"name": "Cidade do Rock",
+	"address": "Barra da Tijuca - Rio de Janeiro/RJ"
+}
+```
+<b>Expected response:</b>
+```
+STATUS: 201 Created
+{
+  "id": 4,
+  "name": "Cidade do Rock",
+  "address": "Barra da Tijuca - Rio de Janeiro/RJ"
+}
 ```
 ### 🎫 Events
+<b>Input data:</b>
 ```
-JSON here
+{
+	"adminId": 1,
+	"name": "Rock in Rio",
+	"description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje, levando em conta que se tornou um dos maiores festivais de rock’n’roll do mundo.",
+	"startDate": "2022-08-02",
+	"endDate": "2022-08-11",
+	"startTime": "00:00:00",
+	"endTime": "23:59:59",
+	"emailContact": "contact@rockinrio.com",
+	"amountFreeTickets": 150,
+	"amountPayedTickets": 70000,
+	"priceTicket": 525.00
+}
 ```
-Just a CI test.
+<b>Expected response:</b>
+```
+STATUS: 201 Created
+{
+  "id": 4,
+  "name": "Rock in Rio",
+  "description": "O Rock in Rio foi o primeiro evento musical desse tipo na América Latina e faz muito sucesso até hoje, levando em conta que se tornou um dos maiores festivais de rock’n’roll do mundo.",
+  "startDate": "2022-08-02",
+  "endDate": "2022-08-11",
+  "startTime": "00:00:00",
+  "endTime": "23:59:59",
+  "emailContact": "contact@rockinrio.com",
+  "amountFreeTickets": 150,
+  "amountPayedTickets": 70000,
+  "priceTicket": 525.0
+}
+```
