@@ -8,6 +8,7 @@ import com.project.event.entities.Event;
 import com.project.event.repositories.AdminRepository;
 import com.project.event.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,15 +42,17 @@ public class EventService {
     }
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {
-        Admin adminEntity = adminRepository.getOne(eventInsertDto.getAdminId());
-        Event eventEntity = new Event(eventInsertDto);
-        eventEntity.setAdmin(adminEntity);
-
         this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(), eventInsertDto.getStartTime(), eventInsertDto.getEndTime());
 
         try {
+            Admin adminEntity = adminRepository.getOne(eventInsertDto.getAdminId());
+            Event eventEntity = new Event(eventInsertDto);
+            eventEntity.setAdmin(adminEntity);
             eventEntity = this.eventRepository.save(eventEntity);
+
             return new EventDto(eventEntity);
+        } catch (DataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review the AdminId, it was not found in the database.");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the event on the database");
         }

@@ -1,5 +1,6 @@
 package com.project.event.dtos.event;
 
+import com.project.event.entities.Admin;
 import com.project.event.entities.Event;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class EventDto {
     private Long amountFreeTickets;
     private Long amountPayedTickets;
     private Double priceTicket;
+    private Long adminId;
 
     public EventDto(Event eventEntity) {
         this.id = eventEntity.getId();
@@ -33,6 +35,7 @@ public class EventDto {
         this.amountFreeTickets = eventEntity.getAmountFreeTickets();
         this.amountPayedTickets = eventEntity.getAmountPayedTickets();
         this.priceTicket = eventEntity.getPriceTicket();
+        this.adminId = eventEntity.getAdmin().getId();
     }
 
 }
