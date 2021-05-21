@@ -63,6 +63,11 @@ public class AdminService {
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         }
+        catch(Exception e)
+        {
+            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "This admin can't be deleted");
+
+        }
     }
 
 }

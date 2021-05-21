@@ -64,6 +64,11 @@ public class AttendeeService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         }
+        catch(Exception e)
+        {
+            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "This attendee can't be deleted.");
+
+        }
     }
 
 }

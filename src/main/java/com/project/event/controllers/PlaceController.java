@@ -14,6 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 @RestController()
 @RequestMapping("/places")
 public class PlaceController {
@@ -40,14 +42,14 @@ public class PlaceController {
     }
 
     @PostMapping()
-    public ResponseEntity<PlaceDTO> postPlace(@RequestBody() PlaceInsertDTO placeInsertDTO) {
+    public ResponseEntity<PlaceDTO> postPlace(@Valid() @RequestBody() PlaceInsertDTO placeInsertDTO) {
         PlaceDTO placeDto = placeService.createPlace(placeInsertDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(placeDto.getId()).toUri();
         return ResponseEntity.created(uri).body(placeDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlaceDTO> putPlace(@RequestBody() PlaceUpdateDTO placeUpdateDto, @PathVariable() Long id) {
+    public ResponseEntity<PlaceDTO> putPlace(@Valid() @RequestBody() PlaceUpdateDTO placeUpdateDto, @PathVariable() Long id) {
         PlaceDTO placeDto = placeService.updatePlace(id, placeUpdateDto);
         return ResponseEntity.ok().body(placeDto);
     }
