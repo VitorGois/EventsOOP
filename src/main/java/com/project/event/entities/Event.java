@@ -1,122 +1,77 @@
 package com.project.event.entities;
 
+import com.project.event.dtos.event.EventInsertDto;
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import com.project.event.dtos.EventCreateDto;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "event")
 @Entity
-@Table(name = "TB_Event")
 public class Event implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
-    @Id
+    @Setter(AccessLevel.NONE)
+    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
-    private String name;
-    private String description;
-    private String place;
-    private String emailContact;
-    
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private LocalTime startTime;
-    private LocalTime endTime;   
-    
-    public Event() {
-    }
-    
-    public Event(EventCreateDto newEvent) {
-        this.name = newEvent.getName();
-        this.description = newEvent.getDescription();
-        this.place = newEvent.getPlace();
-        this.startDate = newEvent.getStartDate();
-        this.endDate = newEvent.getEndDate();
-        this.startTime = newEvent.getStartTime();
-        this.endTime = newEvent.getEndTime();
-        this.emailContact = newEvent.getEmailContact();
+    @NonNull private String name;
+    @NonNull private String description;
+    @NonNull private LocalDate startDate;
+    @NonNull private LocalDate endDate;
+    @NonNull private LocalTime startTime;
+    @NonNull private LocalTime endTime;
+    @NonNull private String emailContact;
+    @NonNull private Long amountFreeTickets;
+    @NonNull private Long amountPayedTickets;
+    @NonNull private Double priceTicket;
+
+    @ManyToOne()
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
+    @OneToMany(mappedBy = "event")
+    @Setter(AccessLevel.NONE) private List<Ticket> tickets = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "event_place",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "place_id")
+    )
+    @Setter(AccessLevel.NONE) private List<Place> places = new ArrayList<>();
+
+    public Event(EventInsertDto eventInsertDto) {
+        this.name = eventInsertDto.getName();
+        this.description = eventInsertDto.getDescription();
+        this.startDate = eventInsertDto.getStartDate();
+        this.endDate = eventInsertDto.getEndDate();
+        this.startTime = eventInsertDto.getStartTime();
+        this.endTime = eventInsertDto.getEndTime();
+        this.emailContact = eventInsertDto.getEmailContact();
+        this.amountFreeTickets = eventInsertDto.getAmountFreeTickets();
+        this.amountPayedTickets = eventInsertDto.getAmountPayedTickets();
+        this.priceTicket = eventInsertDto.getPriceTicket();
     }
 
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
+    public void addPlace(Place place) {
+        this.places.add(place);
     }
 
-    public String getName() {
-        return name;
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getEmailContact() {
-        return emailContact;
-    }
-
-    public void setEmailContact(String emailContact) {
-        this.emailContact = emailContact;
-    }
-
 
 }
