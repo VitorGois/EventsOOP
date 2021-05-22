@@ -14,6 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 @RestController()
 @RequestMapping("/attendees")
 public class AttendeeController {
@@ -40,14 +42,14 @@ public class AttendeeController {
     }
 
     @PostMapping
-    public ResponseEntity<AttendeeDTO> postAttendee(@RequestBody() AttendeeInsertDTO attendeeInsertDTO) {
+    public ResponseEntity<AttendeeDTO> postAttendee(@Valid() @RequestBody() AttendeeInsertDTO attendeeInsertDTO) {
         AttendeeDTO attendeeDto = this.attendeeService.createAttendee(attendeeInsertDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(attendeeDto.getId()).toUri();
         return ResponseEntity.created(uri).body(attendeeDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AttendeeDTO> putAttendee(@RequestBody() AttendeeUpdateDTO attendeeUpdateDTO, @PathVariable() Long id) {
+    public ResponseEntity<AttendeeDTO> putAttendee(@Valid() @RequestBody() AttendeeUpdateDTO attendeeUpdateDTO, @PathVariable() Long id) {
         AttendeeDTO attendeeDto = this.attendeeService.updateAttendee(id, attendeeUpdateDTO);
         return ResponseEntity.ok().body(attendeeDto);
     }

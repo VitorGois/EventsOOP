@@ -85,6 +85,11 @@ public class EventService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         }
+        catch(Exception e)
+        {
+            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "This event can't be deleted");
+
+        }
     }
 
     private Boolean verifyDateAndTime(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {

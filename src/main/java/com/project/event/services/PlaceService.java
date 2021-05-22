@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.util.Optional;
 
 @Service
@@ -61,9 +62,14 @@ public class PlaceService {
     public void removePlace(Long id) {
         try {
             this.placeRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
+        }catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
+        }
+        catch(Exception e)
+        {
+            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "You can't delete this place.");
+
+        }
         }
     }
 
-}
