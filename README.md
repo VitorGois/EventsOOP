@@ -24,9 +24,9 @@ Develop a system to control events.
 - [x] Create place CRUD
 - [x] Create event CRUD
 - [ ] Create ticket CRUD
-- [ ] Validate business rules
+- [x] Validate business rules
 - [x] Insert mock data
-- [ ] Handle application errors
+- [x] Handle application errors
 - [ ] Authentication and Authorization (Soon)
 
 ## UML
