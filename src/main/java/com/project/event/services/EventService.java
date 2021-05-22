@@ -8,7 +8,6 @@ import com.project.event.entities.Event;
 import com.project.event.repositories.AdminRepository;
 import com.project.event.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,30 +30,39 @@ public class EventService {
     private AdminRepository adminRepository;
 
     public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description) {
-        Page<Event> eventList = this.eventRepository.find(pageRequest, name, description);
-        return eventList.map(event -> new EventDto(event));
+        try {
+            Page<Event> eventList = this.eventRepository.find(pageRequest, name, description);
+            return eventList.map(event -> new EventDto(event));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
     public EventDto readEventById(Long id) {
-        Optional<Event> opEvent = eventRepository.findById(id);
-        Event eventEntity = opEvent.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        return new EventDto(eventEntity);
+        try {
+            Event eventEntity = eventRepository.getOne(id);
+            return new EventDto(eventEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {
+        Optional<Admin> opAdmin = adminRepository.findById(eventInsertDto.getAdminId());
+        Admin adminEntity = opAdmin.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
+
         this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(), eventInsertDto.getStartTime(), eventInsertDto.getEndTime());
 
         try {
-            Admin adminEntity = adminRepository.getOne(eventInsertDto.getAdminId());
             Event eventEntity = new Event(eventInsertDto);
             eventEntity.setAdmin(adminEntity);
             eventEntity = this.eventRepository.save(eventEntity);
 
             return new EventDto(eventEntity);
-        } catch (DataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review the AdminId, it was not found in the database.");
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the event on the database");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the admin on the database");
         }
     }
 
@@ -62,7 +70,7 @@ public class EventService {
         this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(), eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
 
         try {
-            Event eventEntity = this.eventRepository.getOne(id);
+            Event eventEntity = eventRepository.getOne(id);
 
             eventEntity.setStartDate(eventUpdateDto.getStartDate());
             eventEntity.setEndDate(eventUpdateDto.getEndDate());
@@ -76,6 +84,8 @@ public class EventService {
             return new EventDto(eventEntity);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
@@ -84,11 +94,8 @@ public class EventService {
             this.eventRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
-        }
-        catch(Exception e)
-        {
-            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "This event can't be deleted");
-
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event can't be deleted");
         }
     }
 

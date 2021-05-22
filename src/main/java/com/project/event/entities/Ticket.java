@@ -37,9 +37,15 @@ public class Ticket implements Serializable {
     @Id
     private Long id;
 
-    @NonNull @Enumerated(EnumType.STRING) private TicketType type;
-    @NonNull private Instant date;
-    @NonNull private Double price;
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    private TicketType type;
+
+    @NonNull
+    private Instant date;
+
+    @NonNull
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "attendee_id")

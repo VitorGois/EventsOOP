@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
+
     @Query(
             "SELECT e FROM Event e " +
                     "WHERE " +

@@ -23,20 +23,28 @@ public class AttendeeService {
     private AttendeeRepository attendeeRepository;
 
     public Page<AttendeeDTO> readAttendeeList(PageRequest pageRequest) {
-        Page<Attendee> atList = this.attendeeRepository.find(pageRequest);
-        return atList.map(at -> new AttendeeDTO(at));
+        try {
+            Page<Attendee> atList = this.attendeeRepository.find(pageRequest);
+            return atList.map(at -> new AttendeeDTO(at));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
-    public AttendeeDTO readAttendeeById(Long Id) {
-        Optional<Attendee> opAttendee = attendeeRepository.findById(Id);
-        Attendee attendeeEntity = opAttendee.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
-        return new AttendeeDTO(attendeeEntity);
+    public AttendeeDTO readAttendeeById(Long id) {
+        try {
+            Attendee attendeeEntity = attendeeRepository.getOne(id);
+            return new AttendeeDTO(attendeeEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
     public AttendeeDTO createAttendee(AttendeeInsertDTO attendeeInsertDTO) {
-        Attendee attendeeEntity = new Attendee(attendeeInsertDTO);
-
         try {
+            Attendee attendeeEntity = new Attendee(attendeeInsertDTO);
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
             return new AttendeeDTO(attendeeEntity);
         } catch (Exception e) {
@@ -52,9 +60,10 @@ public class AttendeeService {
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
 
             return new AttendeeDTO(attendeeEntity);
-
-        } catch (EntityNotFoundException ex) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
@@ -63,11 +72,8 @@ public class AttendeeService {
             this.attendeeRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
-        }
-        catch(Exception e)
-        {
-            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "This attendee can't be deleted.");
-
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This attendee can't be deleted");
         }
     }
 

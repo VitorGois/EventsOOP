@@ -15,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
 
-import java.util.Optional;
-
 @Service
 public class PlaceService {
 
@@ -24,52 +22,59 @@ public class PlaceService {
     private PlaceRepository placeRepository;
 
     public Page<PlaceDTO> readPlaceList(PageRequest pageRequest) {
-        Page<Place> placeList = this.placeRepository.find(pageRequest);
-        return placeList.map(place -> new PlaceDTO(place));
+        try {
+            Page<Place> placeList = this.placeRepository.find(pageRequest);
+            return placeList.map(place -> new PlaceDTO(place));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
-    public PlaceDTO readPlaceById(Long Id) {
-        Optional<Place> opPlace = placeRepository.findById(Id);
-        Place pl = opPlace.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
-        return new PlaceDTO(pl);
+    public PlaceDTO readPlaceById(Long id) {
+        try {
+            Place placeEntity = placeRepository.getOne(id);
+            return new PlaceDTO(placeEntity);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
     }
 
     public PlaceDTO createPlace(PlaceInsertDTO placeInsertDto) {
-        Place placeEntity = new Place(placeInsertDto);
-
         try {
+            Place placeEntity = new Place(placeInsertDto);
             placeEntity = this.placeRepository.save(placeEntity);
             return new PlaceDTO(placeEntity);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the place on the database");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when saving the admin on the database");
         }
     }
 
     public PlaceDTO updatePlace(Long id, PlaceUpdateDTO placeUpdateDTO) {
         try {
-            Place placeEntity = this.placeRepository.getOne(id);
+            Place placeEntity = placeRepository.getOne(id);
 
             placeEntity.setName(placeUpdateDTO.getName());
             placeEntity.setAddress(placeUpdateDTO.getAddress());
             placeEntity = this.placeRepository.save(placeEntity);
 
             return new PlaceDTO(placeEntity);
-        } catch (EntityNotFoundException ex) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
     public void removePlace(Long id) {
         try {
             this.placeRepository.deleteById(id);
-        }catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
-        }
-        catch(Exception e)
-        {
-            throw new ResponseStatusException (HttpStatus.BAD_REQUEST, "You can't delete this place.");
-
-        }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This admin can't be deleted");
         }
     }
+}
 

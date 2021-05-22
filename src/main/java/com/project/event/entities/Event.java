@@ -27,23 +27,43 @@ public class Event implements Serializable {
     @Id
     private Long id;
 
-    @NonNull private String name;
-    @NonNull private String description;
-    @NonNull private LocalDate startDate;
-    @NonNull private LocalDate endDate;
-    @NonNull private LocalTime startTime;
-    @NonNull private LocalTime endTime;
-    @NonNull private String emailContact;
-    @NonNull private Long amountFreeTickets;
-    @NonNull private Long amountPayedTickets;
-    @NonNull private Double priceTicket;
+    @NonNull
+    private String name;
+
+    @NonNull
+    private String description;
+
+    @NonNull
+    private LocalDate startDate;
+
+    @NonNull
+    private LocalDate endDate;
+
+    @NonNull
+    private LocalTime startTime;
+
+    @NonNull
+    private LocalTime endTime;
+
+    @NonNull
+    private String emailContact;
+
+    @NonNull
+    private Long amountFreeTickets;
+
+    @NonNull
+    private Long amountPayedTickets;
+
+    @NonNull
+    private Double priceTicket;
 
     @ManyToOne()
     @JoinColumn(name = "admin_id")
     private Admin admin;
 
     @OneToMany(mappedBy = "event")
-    @Setter(AccessLevel.NONE) private List<Ticket> tickets = new ArrayList<>();
+    @Setter(AccessLevel.NONE)
+    private List<Ticket> tickets = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -51,7 +71,8 @@ public class Event implements Serializable {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "place_id")
     )
-    @Setter(AccessLevel.NONE) private List<Place> places = new ArrayList<>();
+    @Setter(AccessLevel.NONE)
+    private List<Place> places = new ArrayList<>();
 
     public Event(EventInsertDto eventInsertDto) {
         this.name = eventInsertDto.getName();

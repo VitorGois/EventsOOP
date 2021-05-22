@@ -7,7 +7,6 @@ import lombok.Data;
 public class AttendeeDTO {
 
     private Long id;
-    private Long attendeeId;
     private String name;
     private String email;
     private Double balance;

@@ -1,6 +1,5 @@
 package com.project.event.dtos.event;
 
-import com.project.event.entities.Admin;
 import com.project.event.entities.Event;
 import lombok.Data;
 

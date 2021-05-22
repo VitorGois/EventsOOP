@@ -16,12 +16,15 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Admin extends BaseUser {
 
-    @NonNull private String phoneNumber;
+    @NonNull
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.REMOVE)
-    @NonNull @Setter(AccessLevel.NONE) private List<Event> events = new ArrayList<>();
+    @NonNull
+    @Setter(AccessLevel.NONE)
+    private List<Event> events = new ArrayList<>();
 
-    public Admin(@NonNull String name, @NonNull String email, @NonNull String phoneNumber) {
+    public Admin(String name, String email, String phoneNumber) {
         super(name, email);
         this.phoneNumber = phoneNumber;
     }
