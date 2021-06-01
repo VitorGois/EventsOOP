@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 import javax.persistence.EntityNotFoundException;
 @Service
 public class AttendeeService {
@@ -42,6 +44,7 @@ public class AttendeeService {
 
     public AttendeeDTO createAttendee(AttendeeInsertDTO attendeeInsertDTO) {
         try {
+            this.verifyEmailExistence(attendeeInsertDTO.getEmail());
             Attendee attendeeEntity = new Attendee(attendeeInsertDTO);
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
             return new AttendeeDTO(attendeeEntity);
@@ -52,6 +55,7 @@ public class AttendeeService {
 
     public AttendeeDTO updateAttendee(Long id, AttendeeUpdateDTO attendeeUpdateDTO) {
         try {
+            this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
             Attendee attendeeEntity = attendeeRepository.getOne(id);
 
             attendeeEntity.setEmail(attendeeUpdateDTO.getEmail());
@@ -73,6 +77,11 @@ public class AttendeeService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This attendee can't be deleted");
         }
+    }
+
+    private void verifyEmailExistence(String email) {
+        Optional<Attendee> opAttendee = this.attendeeRepository.findByEmail(email);
+        opAttendee.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used"));
     }
 
 }

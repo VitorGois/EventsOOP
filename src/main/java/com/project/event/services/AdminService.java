@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 import javax.persistence.EntityNotFoundException;
 
 @Service
@@ -43,6 +45,7 @@ public class AdminService {
 
     public AdminDto createAdmin(AdminInsertDto adminInsertDto) {
         try {
+            this.verifyEmailExistence(adminInsertDto.getEmail());
             Admin adminEntity = new Admin(adminInsertDto);
             adminEntity = this.adminRepository.save(adminEntity);
             return new AdminDto(adminEntity);
@@ -53,6 +56,7 @@ public class AdminService {
 
     public AdminDto updateAdmin(Long id, AdminUpdateDto adminUpdateDto) {
         try {
+            this.verifyEmailExistence(adminUpdateDto.getEmail());
             Admin adminEntity = this.adminRepository.getOne(id);
 
             adminEntity.setEmail(adminUpdateDto.getEmail());
@@ -74,6 +78,11 @@ public class AdminService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This admin can't be deleted");
         }
+    }
+
+    private void verifyEmailExistence(String email) {
+        Optional<Admin> opAdmin = this.adminRepository.findByEmail(email);
+        opAdmin.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used"));
     }
 
 }
