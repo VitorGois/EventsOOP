@@ -1,10 +1,13 @@
 package com.project.event.dtos.event;
 
 import com.project.event.entities.Event;
+import com.project.event.entities.Place;
+
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class EventDto {
@@ -21,6 +24,7 @@ public class EventDto {
     private Long amountPayedTickets;
     private Double priceTicket;
     private Long adminId;
+    private List<Place> places;
 
     public EventDto(Event eventEntity) {
         this.id = eventEntity.getId();
@@ -35,6 +39,7 @@ public class EventDto {
         this.amountPayedTickets = eventEntity.getAmountPayedTickets();
         this.priceTicket = eventEntity.getPriceTicket();
         this.adminId = eventEntity.getAdmin().getId();
+        this.places = eventEntity.getPlaces();
     }
 
 }

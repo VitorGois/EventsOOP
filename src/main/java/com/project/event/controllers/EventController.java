@@ -64,4 +64,10 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{idEvent}/places/{idPlace}")
+    public ResponseEntity<EventDto> connectEventPlace(@PathVariable() Long idEvent, @PathVariable() Long idPlace) {
+        EventDto eventDto = this.eventService.connectEventPlace(idEvent, idPlace);
+        return ResponseEntity.ok(eventDto);
+    }
+
 }

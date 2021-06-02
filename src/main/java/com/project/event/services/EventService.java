@@ -3,10 +3,14 @@ package com.project.event.services;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
+import com.project.event.dtos.place.PlaceDTO;
 import com.project.event.entities.Admin;
 import com.project.event.entities.Event;
+import com.project.event.entities.Place;
 import com.project.event.repositories.AdminRepository;
 import com.project.event.repositories.EventRepository;
+import com.project.event.repositories.PlaceRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -18,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +33,9 @@ public class EventService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
 
     public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description) {
         try {
@@ -51,9 +59,11 @@ public class EventService {
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {
         Optional<Admin> opAdmin = adminRepository.findById(eventInsertDto.getAdminId());
-        Admin adminEntity = opAdmin.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
+        Admin adminEntity = opAdmin
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
-        this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(), eventInsertDto.getStartTime(), eventInsertDto.getEndTime());
+        this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(),
+                eventInsertDto.getStartTime(), eventInsertDto.getEndTime());
 
         try {
             Event eventEntity = new Event(eventInsertDto);
@@ -67,7 +77,8 @@ public class EventService {
     }
 
     public EventDto updateEvent(Long id, EventUpdateDto eventUpdateDto) {
-        this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(), eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
+        this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(),
+                eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
 
         try {
             Event eventEntity = eventRepository.getOne(id);
@@ -99,13 +110,47 @@ public class EventService {
         }
     }
 
+    public EventDto connectEventPlace(Long idEvent, Long idPlace) {
+        Place placeEntity = this.placeRepository.findById(idPlace)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+        Event eventEntity = this.eventRepository.findById(idEvent)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        this.verifyPlaceAvailability(placeEntity, eventEntity);
+
+        try {
+            eventEntity.addPlace(placeEntity);
+            placeEntity.addEvent(eventEntity);
+
+            eventEntity = this.eventRepository.save(eventEntity);
+            this.placeRepository.save(placeEntity);
+
+            return new EventDto(eventEntity);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when connect the event with the place.");
+        }
+    }
+
     private Boolean verifyDateAndTime(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         if ((endDate.equals(startDate) && endTime.isAfter(startTime)) || endDate.isAfter(startDate)) {
             return true;
         } else if (endDate.isBefore(startDate)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date must be later than the initial date.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The end date must be later than the initial date.");
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end time must be later than the start time.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The end time must be later than the start time.");
+        }
+    }
+
+    private void verifyPlaceAvailability(Place place, Event event) {
+        List<Event> eventsOfPlaces = place.getEvents();
+
+        for (Event e : eventsOfPlaces) {
+            if (e.getEndDate().isAfter(event.getStartDate()) || e.getStartDate().isBefore(event.getEndDate())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "There is already an event that will be held on this date.");
+            }
         }
     }
 

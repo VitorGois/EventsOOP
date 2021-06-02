@@ -1,5 +1,6 @@
 package com.project.event.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.event.dtos.event.EventInsertDto;
 import lombok.*;
 
@@ -65,6 +66,7 @@ public class Event implements Serializable {
     @Setter(AccessLevel.NONE)
     private List<Ticket> tickets = new ArrayList<>();
 
+    @JsonManagedReference
     @ManyToMany
     @JoinTable(
             name = "event_place",
