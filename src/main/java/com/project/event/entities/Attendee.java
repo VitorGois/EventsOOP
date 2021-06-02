@@ -33,6 +33,7 @@ public class Attendee extends BaseUser {
 
     public Attendee(AttendeeInsertDTO newAttendee) {
         super(newAttendee.getName(), newAttendee.getEmail());
-        this.balance = newAttendee.getBalance();
+        this.balance = 0.0;
     }
+    
 }
