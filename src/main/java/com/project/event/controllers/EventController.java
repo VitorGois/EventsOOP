@@ -46,7 +46,7 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<EventDto> postEventDtoResponseEntity(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
+    public ResponseEntity<EventDto> postEvent(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
         EventDto eventDto = this.eventService.createEvent(eventInsertDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();
         return ResponseEntity.created(uri).body(eventDto);
