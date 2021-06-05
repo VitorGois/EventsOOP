@@ -40,10 +40,6 @@ public class Place implements Serializable {
         this.events.add(event);
     }
 
-    public void removeEvent(Event event) {
-        this.getEvents().remove(event);
-    }
-
     public Place(PlaceInsertDTO newPlace) {
         this.name = newPlace.getName();
         this.address = newPlace.getAddress();

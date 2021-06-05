@@ -3,12 +3,17 @@ package com.project.event.services;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
+import com.project.event.dtos.ticket.TicketInsertDto;
 import com.project.event.entities.Admin;
+import com.project.event.entities.Attendee;
 import com.project.event.entities.Event;
 import com.project.event.entities.Place;
+import com.project.event.entities.Ticket;
 import com.project.event.repositories.AdminRepository;
+import com.project.event.repositories.AttendeeRepository;
 import com.project.event.repositories.EventRepository;
 import com.project.event.repositories.PlaceRepository;
+import com.project.event.repositories.TicketRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityNotFoundException;
+
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -34,7 +41,13 @@ public class EventService {
     private AdminRepository adminRepository;
 
     @Autowired
+    private AttendeeRepository attendeeRepository;
+
+    @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
 
     public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description) {
         try {
@@ -109,7 +122,7 @@ public class EventService {
         }
     }
 
-    public EventDto connectEventPlace(Long idEvent, Long idPlace) {
+    public EventDto assocEventPlace(Long idEvent, Long idPlace) {
         Place placeEntity = this.placeRepository.findById(idPlace)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
         Event eventEntity = this.eventRepository.findById(idEvent)
@@ -125,11 +138,11 @@ public class EventService {
 
             return new EventDto(eventEntity);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when connect the event with the place.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error associating place from event.");
         }
     }
 
-    public EventDto disconnectEventPlace(Long idEvent, Long idPlace) {
+    public EventDto disassocEventPlace(Long idEvent, Long idPlace) {
         Place placeEntity = this.placeRepository.findById(idPlace)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
         Event eventEntity = this.eventRepository.findById(idEvent)
@@ -143,8 +156,61 @@ public class EventService {
 
             return new EventDto(eventEntity);
         } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error disassociating place from event.");
+        }
+    }
+
+    public EventDto buyTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+        Event eventEntity = this.eventRepository.findById(idEvent)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
+        try {
+            Double price = 0.0;
+            Ticket ticket = new Ticket(ticketInsertDto.getTicketType(), Instant.now(), price, attendeeEntity,
+                    eventEntity);
+
+            eventEntity.addTicket(ticket);
+
+            eventEntity = this.eventRepository.save(eventEntity);
+            this.ticketRepository.save(ticket);
+
+            return new EventDto(eventEntity);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error confirming presence at event.");
+        }
+    }
+
+    public EventDto returnTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+        Event eventEntity = this.eventRepository.findById(idEvent)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
+        if (eventEntity.getStartDate().isBefore(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Error when disconnect the event from the place.");
+                    "The event has already taken place, it is not possible to make a refund.");
+        }
+
+        try {
+            Ticket ticketEntity = new Ticket();
+
+            for (Ticket ticket : eventEntity.getTickets()) {
+                if (ticket.getAttendee().equals(attendeeEntity) && ticket.getEvent().equals(eventEntity)) {
+                    ticketEntity = ticket;
+                }
+            }
+
+            eventEntity.removeTicket(ticketEntity, attendeeEntity);
+
+            eventEntity = this.eventRepository.save(eventEntity);
+            this.ticketRepository.delete(ticketEntity);
+
+            return new EventDto(eventEntity);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error returning ticket.");
         }
     }
 
