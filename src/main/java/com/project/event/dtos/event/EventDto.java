@@ -7,7 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 public class EventDto {
@@ -24,7 +24,7 @@ public class EventDto {
     private Long amountPayedTickets;
     private Double priceTicket;
     private Long adminId;
-    private List<Place> places;
+    private Set<Place> places;
 
     public EventDto(Event eventEntity) {
         this.id = eventEntity.getId();

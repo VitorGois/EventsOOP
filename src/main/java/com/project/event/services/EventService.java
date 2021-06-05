@@ -3,7 +3,6 @@ package com.project.event.services;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
-import com.project.event.dtos.place.PlaceDTO;
 import com.project.event.entities.Admin;
 import com.project.event.entities.Event;
 import com.project.event.entities.Place;
@@ -22,8 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class EventService {
@@ -120,7 +119,6 @@ public class EventService {
 
         try {
             eventEntity.addPlace(placeEntity);
-            placeEntity.addEvent(eventEntity);
 
             eventEntity = this.eventRepository.save(eventEntity);
             this.placeRepository.save(placeEntity);
@@ -128,6 +126,25 @@ public class EventService {
             return new EventDto(eventEntity);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error when connect the event with the place.");
+        }
+    }
+
+    public EventDto disconnectEventPlace(Long idEvent, Long idPlace) {
+        Place placeEntity = this.placeRepository.findById(idPlace)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+        Event eventEntity = this.eventRepository.findById(idEvent)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        try {
+            eventEntity.removePlace(placeEntity);
+
+            eventEntity = this.eventRepository.save(eventEntity);
+            this.placeRepository.save(placeEntity);
+
+            return new EventDto(eventEntity);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Error when disconnect the event from the place.");
         }
     }
 
@@ -144,7 +161,7 @@ public class EventService {
     }
 
     private void verifyPlaceAvailability(Place place, Event event) {
-        List<Event> eventsOfPlaces = place.getEvents();
+        Set<Event> eventsOfPlaces = place.getEvents();
 
         for (Event e : eventsOfPlaces) {
             if (e.getEndDate().isAfter(event.getStartDate()) || e.getStartDate().isBefore(event.getEndDate())) {

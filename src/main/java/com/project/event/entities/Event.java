@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -68,13 +69,9 @@ public class Event implements Serializable {
 
     @JsonManagedReference
     @ManyToMany
-    @JoinTable(
-            name = "event_place",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "place_id")
-    )
+    @JoinTable(name = "event_place", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "place_id"))
     @Setter(AccessLevel.NONE)
-    private List<Place> places = new ArrayList<>();
+    private Set<Place> places;
 
     public Event(EventInsertDto eventInsertDto) {
         this.name = eventInsertDto.getName();
@@ -91,6 +88,10 @@ public class Event implements Serializable {
 
     public void addPlace(Place place) {
         this.places.add(place);
+    }
+
+    public void removePlace(Place place) {
+        this.getPlaces().remove(place);
     }
 
     public void addTicket(Ticket ticket) {

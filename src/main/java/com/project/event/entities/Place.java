@@ -6,8 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,10 +34,14 @@ public class Place implements Serializable {
     @JsonBackReference
     @ManyToMany(mappedBy = "places")
     @Setter(AccessLevel.NONE)
-    private List<Event> events = new ArrayList<>();
+    private Set<Event> events;
 
     public void addEvent(Event event) {
         this.events.add(event);
+    }
+
+    public void removeEvent(Event event) {
+        this.getEvents().remove(event);
     }
 
     public Place(PlaceInsertDTO newPlace) {

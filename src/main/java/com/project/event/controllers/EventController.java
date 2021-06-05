@@ -70,4 +70,10 @@ public class EventController {
         return ResponseEntity.ok(eventDto);
     }
 
+    @DeleteMapping("/{idEvent}/places/{idPlace}")
+    public ResponseEntity<EventDto> disconnectEventPlace(@PathVariable() Long idEvent, @PathVariable() Long idPlace) {
+        EventDto eventDto = this.eventService.disconnectEventPlace(idEvent, idPlace);
+        return ResponseEntity.ok(eventDto);
+    }
+
 }
