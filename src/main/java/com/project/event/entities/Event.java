@@ -1,5 +1,6 @@
 package com.project.event.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.event.dtos.event.EventInsertDto;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -65,14 +67,11 @@ public class Event implements Serializable {
     @Setter(AccessLevel.NONE)
     private List<Ticket> tickets = new ArrayList<>();
 
+    @JsonManagedReference
     @ManyToMany
-    @JoinTable(
-            name = "event_place",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "place_id")
-    )
+    @JoinTable(name = "event_place", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "place_id"))
     @Setter(AccessLevel.NONE)
-    private List<Place> places = new ArrayList<>();
+    private Set<Place> places;
 
     public Event(EventInsertDto eventInsertDto) {
         this.name = eventInsertDto.getName();
@@ -88,11 +87,33 @@ public class Event implements Serializable {
     }
 
     public void addPlace(Place place) {
-        this.places.add(place);
+        this.getPlaces().add(place);
+    }
+
+    public void removePlace(Place place) {
+        this.getPlaces().remove(place);
     }
 
     public void addTicket(Ticket ticket) {
-        this.tickets.add(ticket);
+        if (ticket.getType() == TicketType.PAID) {
+            ticket.setPrice(this.getPriceTicket());
+            this.amountPayedTickets -= 1;
+        } else {
+            this.amountFreeTickets -= 1;
+        }
+
+        this.getTickets().add(ticket);
+    }
+
+    public void removeTicket(Ticket ticket, Attendee attendee) {
+        if (ticket.getType() == TicketType.PAID) {
+            this.amountPayedTickets += 1;
+            attendee.setBalance(attendee.getBalance() + ticket.getPrice());
+        } else {
+            this.amountFreeTickets += 1;
+        }
+
+        this.getTickets().remove(ticket);
     }
 
 }

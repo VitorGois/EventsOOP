@@ -32,6 +32,6 @@ INSERT INTO EVENT_PLACE (EVENT_ID, PLACE_ID) VALUES
     (2, 3);
 
 INSERT INTO TICKET (ID, DATE, TYPE, PRICE, ATTENDEE_ID, EVENT_ID) VALUES
-    (1, '2021-09-07', 'F', 0.0, 2, 2),
-    (2, '2021-10-29', 'P', 650.0, 4, 3),
-    (3, '2021-06-09', 'P', 220.0, 6, 1);
+    (1, '2021-09-07', 'FREE', 0.0, 2, 2),
+    (2, '2021-10-29', 'PAID', 650.0, 4, 3),
+    (3, '2021-06-09', 'PAID', 220.0, 6, 1);

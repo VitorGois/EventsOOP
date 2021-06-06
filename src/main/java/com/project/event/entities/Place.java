@@ -1,12 +1,12 @@
 package com.project.event.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.event.dtos.place.PlaceInsertDTO;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,9 +31,10 @@ public class Place implements Serializable {
     @NonNull
     private String address;
 
+    @JsonBackReference
     @ManyToMany(mappedBy = "places")
     @Setter(AccessLevel.NONE)
-    private List<Event> events = new ArrayList<>();
+    private Set<Event> events;
 
     public void addEvent(Event event) {
         this.events.add(event);

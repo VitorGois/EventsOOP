@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+
 @Service
 public class AttendeeService {
 
@@ -85,4 +86,3 @@ public class AttendeeService {
     }
 
 }
-

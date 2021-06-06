@@ -3,7 +3,9 @@ package com.project.event.controllers;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
+import com.project.event.dtos.ticket.TicketInsertDto;
 import com.project.event.services.EventService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,6 +64,30 @@ public class EventController {
     public ResponseEntity<Void> deleteEvent(@PathVariable() Long id) {
         this.eventService.removeEvent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{idEvent}/places/{idPlace}")
+    public ResponseEntity<EventDto> connectEventPlace(@PathVariable() Long idEvent, @PathVariable() Long idPlace) {
+        EventDto eventDto = this.eventService.assocEventPlace(idEvent, idPlace);
+        return ResponseEntity.ok(eventDto);
+    }
+
+    @DeleteMapping("/{idEvent}/places/{idPlace}")
+    public ResponseEntity<EventDto> disconnectEventPlace(@PathVariable() Long idEvent, @PathVariable() Long idPlace) {
+        EventDto eventDto = this.eventService.disassocEventPlace(idEvent, idPlace);
+        return ResponseEntity.ok(eventDto);
+    }
+
+    @PostMapping("/{idEvent}/tickets")
+    public ResponseEntity<EventDto> connectEventTicket(@PathVariable() Long idEvent, @RequestBody() TicketInsertDto ticketInsertDto) {
+        EventDto eventDto = this.eventService.buyTicket(idEvent, ticketInsertDto);
+        return ResponseEntity.ok(eventDto);
+    }
+
+    @DeleteMapping("/{idEvent}/tickets")
+    public ResponseEntity<EventDto> disconnectEventTicket(@PathVariable() Long idEvent, @RequestBody() TicketInsertDto ticketInsertDto) {
+        EventDto eventDto = this.eventService.returnTicket(idEvent, ticketInsertDto);
+        return ResponseEntity.ok(eventDto);
     }
 
 }
