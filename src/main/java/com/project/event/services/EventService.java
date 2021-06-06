@@ -230,10 +230,12 @@ public class EventService {
         Set<Event> eventsOfPlaces = place.getEvents();
 
         for (Event e : eventsOfPlaces) {
-            if (e.getEndDate().isAfter(event.getStartDate()) || e.getStartDate().isBefore(event.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "There is already an event that will be held on this date.");
+            if (event.getStartDate().isAfter(e.getEndDate()) || event.getEndDate().isBefore(e.getStartDate())) {
+                return;
             }
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "There is already an event that will be held on this date.");
         }
     }
 
