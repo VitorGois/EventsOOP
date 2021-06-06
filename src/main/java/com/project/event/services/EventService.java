@@ -9,6 +9,7 @@ import com.project.event.entities.Attendee;
 import com.project.event.entities.Event;
 import com.project.event.entities.Place;
 import com.project.event.entities.Ticket;
+import com.project.event.entities.TicketType;
 import com.project.event.repositories.AdminRepository;
 import com.project.event.repositories.AttendeeRepository;
 import com.project.event.repositories.EventRepository;
@@ -16,7 +17,6 @@ import com.project.event.repositories.PlaceRepository;
 import com.project.event.repositories.TicketRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -27,8 +27,9 @@ import javax.persistence.EntityNotFoundException;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -59,19 +60,17 @@ public class EventService {
     }
 
     public EventDto readEventById(Long id) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         try {
-            Event eventEntity = eventRepository.getOne(id);
             return new EventDto(eventEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
     }
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {
-        Optional<Admin> opAdmin = adminRepository.findById(eventInsertDto.getAdminId());
-        Admin adminEntity = opAdmin
+        Admin adminEntity = adminRepository.findById(eventInsertDto.getAdminId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
         this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(),
@@ -89,12 +88,17 @@ public class EventService {
     }
 
     public EventDto updateEvent(Long id, EventUpdateDto eventUpdateDto) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
         this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(),
                 eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
 
-        try {
-            Event eventEntity = eventRepository.getOne(id);
+        for (Place place : eventEntity.getPlaces()) {
+            this.verifyPlaceAvailability(place, eventEntity);
+        }
 
+        try {
             eventEntity.setStartDate(eventUpdateDto.getStartDate());
             eventEntity.setEndDate(eventUpdateDto.getEndDate());
             eventEntity.setStartTime(eventUpdateDto.getStartTime());
@@ -113,10 +117,13 @@ public class EventService {
     }
 
     public void removeEvent(Long id) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        this.verifyTicketExistence(eventEntity);
+
         try {
             this.eventRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event can't be deleted");
         }
@@ -160,11 +167,13 @@ public class EventService {
         }
     }
 
-    public EventDto buyTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public EventDto purchaseTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
+        this.verifyTicketAvailability(eventEntity, ticketInsertDto);
 
         try {
             Double price = 0.0;
@@ -182,7 +191,7 @@ public class EventService {
         }
     }
 
-    public EventDto returnTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public EventDto refundTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
@@ -230,10 +239,37 @@ public class EventService {
         Set<Event> eventsOfPlaces = place.getEvents();
 
         for (Event e : eventsOfPlaces) {
-            if (e.getEndDate().isAfter(event.getStartDate()) || e.getStartDate().isBefore(event.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "There is already an event that will be held on this date.");
+            if (event.getStartDate().isAfter(e.getEndDate()) || event.getEndDate().isBefore(e.getStartDate())) {
+                continue;
             }
+
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "There is already an event that will be held on this date.");
+        }
+    }
+
+    private void verifyTicketAvailability(Event eventEntity, TicketInsertDto ticketInsertDto) {
+        LocalDateTime eventStartDateTime = LocalDateTime.of(eventEntity.getStartDate(), eventEntity.getStartTime());
+        if (eventStartDateTime.isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The event has already taken place, it is not possible to purchase tickets for it.");
+        }
+
+        if (ticketInsertDto.getTicketType() == TicketType.PAID && eventEntity.getAmountPayedTickets() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Paid tickets for the event are already sold out.");
+        } else if (ticketInsertDto.getTicketType() == TicketType.FREE && eventEntity.getAmountFreeTickets() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Free tickets for the event are already sold out.");
+        }
+    }
+    
+    private void verifyTicketExistence(Event event) {
+        List<Ticket> tickets = event.getTickets();
+
+        if (!tickets.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This event cannot be deleted as there are still registered tickets.");
         }
     }
 

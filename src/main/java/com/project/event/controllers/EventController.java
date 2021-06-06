@@ -28,14 +28,14 @@ public class EventController {
 
     @GetMapping()
     public ResponseEntity<Page<EventDto>> getEvents(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "6") Integer linesPerPage,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction,
             @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "description", defaultValue = "") String description,
             @RequestParam(value = "startDate", defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
-    ) {
+            ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         Page<EventDto> eventList = this.eventService.readEventList(pageRequest, name, description);
         return ResponseEntity.ok(eventList);
@@ -50,12 +50,14 @@ public class EventController {
     @PostMapping()
     public ResponseEntity<EventDto> postEvent(@Valid() @RequestBody() EventInsertDto eventInsertDto) {
         EventDto eventDto = this.eventService.createEvent(eventInsertDto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(eventDto.getId())
+                .toUri();
         return ResponseEntity.created(uri).body(eventDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> putEvent(@Valid() @RequestBody() EventUpdateDto eventUpdateDto, @PathVariable() Long id) {
+    public ResponseEntity<EventDto> putEvent(@Valid() @RequestBody() EventUpdateDto eventUpdateDto,
+            @PathVariable() Long id) {
         EventDto eventDto = this.eventService.updateEvent(id, eventUpdateDto);
         return ResponseEntity.ok().body(eventDto);
     }
@@ -79,14 +81,16 @@ public class EventController {
     }
 
     @PostMapping("/{idEvent}/tickets")
-    public ResponseEntity<EventDto> connectEventTicket(@PathVariable() Long idEvent, @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.eventService.buyTicket(idEvent, ticketInsertDto);
+    public ResponseEntity<EventDto> connectEventTicket(@PathVariable() Long idEvent,
+            @RequestBody() TicketInsertDto ticketInsertDto) {
+        EventDto eventDto = this.eventService.purchaseTicket(idEvent, ticketInsertDto);
         return ResponseEntity.ok(eventDto);
     }
 
     @DeleteMapping("/{idEvent}/tickets")
-    public ResponseEntity<EventDto> disconnectEventTicket(@PathVariable() Long idEvent, @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.eventService.returnTicket(idEvent, ticketInsertDto);
+    public ResponseEntity<EventDto> disconnectEventTicket(@PathVariable() Long idEvent,
+            @RequestBody() TicketInsertDto ticketInsertDto) {
+        EventDto eventDto = this.eventService.refundTicket(idEvent, ticketInsertDto);
         return ResponseEntity.ok(eventDto);
     }
 

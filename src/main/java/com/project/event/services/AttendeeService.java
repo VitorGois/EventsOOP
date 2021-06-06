@@ -6,7 +6,6 @@ import com.project.event.dtos.attendee.AttendeeUpdateDTO;
 import com.project.event.entities.Attendee;
 import com.project.event.repositories.AttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class AttendeeService {
@@ -33,11 +30,11 @@ public class AttendeeService {
     }
 
     public AttendeeDTO readAttendeeById(Long id) {
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
         try {
-            Attendee attendeeEntity = attendeeRepository.getOne(id);
             return new AttendeeDTO(attendeeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
@@ -55,26 +52,27 @@ public class AttendeeService {
     }
 
     public AttendeeDTO updateAttendee(Long id, AttendeeUpdateDTO attendeeUpdateDTO) {
-        try {
-            this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
-            Attendee attendeeEntity = attendeeRepository.getOne(id);
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+        
+        this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
 
+        try {
             attendeeEntity.setEmail(attendeeUpdateDTO.getEmail());
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
 
             return new AttendeeDTO(attendeeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
     public void removeAttendee(Long id) {
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
         try {
             this.attendeeRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This attendee can't be deleted");
         }
