@@ -27,6 +27,7 @@ import javax.persistence.EntityNotFoundException;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -248,6 +249,12 @@ public class EventService {
     }
 
     private void verifyTicketAvailability(Event eventEntity, TicketInsertDto ticketInsertDto) {
+        LocalDateTime eventStartDateTime = LocalDateTime.of(eventEntity.getStartDate(), eventEntity.getStartTime());
+        if (eventStartDateTime.isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The event has already taken place, it is not possible to purchase tickets for it.");
+        }
+
         if (ticketInsertDto.getTicketType() == TicketType.PAID && eventEntity.getAmountPayedTickets() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Paid tickets for the event are already sold out.");
