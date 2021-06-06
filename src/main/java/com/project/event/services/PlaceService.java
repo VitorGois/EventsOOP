@@ -31,11 +31,11 @@ public class PlaceService {
     }
 
     public PlaceDTO readPlaceById(Long id) {
+        Place placeEntity = placeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
         try {
-            Place placeEntity = placeRepository.getOne(id);
             return new PlaceDTO(placeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
@@ -52,26 +52,26 @@ public class PlaceService {
     }
 
     public PlaceDTO updatePlace(Long id, PlaceUpdateDTO placeUpdateDTO) {
-        try {
-            Place placeEntity = placeRepository.getOne(id);
+        Place placeEntity = placeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
 
+        try {
             placeEntity.setName(placeUpdateDTO.getName());
             placeEntity.setAddress(placeUpdateDTO.getAddress());
             placeEntity = this.placeRepository.save(placeEntity);
 
             return new PlaceDTO(placeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
     public void removePlace(Long id) {
+        Place placeEntity = placeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
         try {
             this.placeRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This admin can't be deleted");
         }

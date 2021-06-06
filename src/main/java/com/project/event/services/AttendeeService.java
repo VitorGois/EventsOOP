@@ -33,11 +33,11 @@ public class AttendeeService {
     }
 
     public AttendeeDTO readAttendeeById(Long id) {
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
         try {
-            Attendee attendeeEntity = attendeeRepository.getOne(id);
             return new AttendeeDTO(attendeeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
@@ -55,26 +55,27 @@ public class AttendeeService {
     }
 
     public AttendeeDTO updateAttendee(Long id, AttendeeUpdateDTO attendeeUpdateDTO) {
-        try {
-            this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
-            Attendee attendeeEntity = attendeeRepository.getOne(id);
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+        
+        this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
 
+        try {
             attendeeEntity.setEmail(attendeeUpdateDTO.getEmail());
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
 
             return new AttendeeDTO(attendeeEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
     public void removeAttendee(Long id) {
+        Attendee attendeeEntity = attendeeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
+
         try {
             this.attendeeRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This attendee can't be deleted");
         }
