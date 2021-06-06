@@ -27,6 +27,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -117,6 +118,8 @@ public class EventService {
         Event eventEntity = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
+        this.verifyTicketExistence(eventEntity);
+
         try {
             this.eventRepository.deleteById(id);
         } catch (Exception e) {
@@ -162,7 +165,7 @@ public class EventService {
         }
     }
 
-    public EventDto buyTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public EventDto purchaseTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
@@ -184,7 +187,7 @@ public class EventService {
         }
     }
 
-    public EventDto returnTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public EventDto refundTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
@@ -238,6 +241,15 @@ public class EventService {
 
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "There is already an event that will be held on this date.");
+        }
+    }
+
+    private void verifyTicketExistence(Event event) {
+        List<Ticket> tickets = event.getTickets();
+
+        if (!tickets.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "This event cannot be deleted as there are still registered tickets.");
         }
     }
 
