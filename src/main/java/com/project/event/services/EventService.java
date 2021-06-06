@@ -16,7 +16,6 @@ import com.project.event.repositories.PlaceRepository;
 import com.project.event.repositories.TicketRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -59,19 +57,17 @@ public class EventService {
     }
 
     public EventDto readEventById(Long id) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         try {
-            Event eventEntity = eventRepository.getOne(id);
             return new EventDto(eventEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
     }
 
     public EventDto createEvent(EventInsertDto eventInsertDto) {
-        Optional<Admin> opAdmin = adminRepository.findById(eventInsertDto.getAdminId());
-        Admin adminEntity = opAdmin
+        Admin adminEntity = adminRepository.findById(eventInsertDto.getAdminId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
         this.verifyDateAndTime(eventInsertDto.getStartDate(), eventInsertDto.getEndDate(),
@@ -89,12 +85,17 @@ public class EventService {
     }
 
     public EventDto updateEvent(Long id, EventUpdateDto eventUpdateDto) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
         this.verifyDateAndTime(eventUpdateDto.getStartDate(), eventUpdateDto.getEndDate(),
                 eventUpdateDto.getStartTime(), eventUpdateDto.getEndTime());
 
-        try {
-            Event eventEntity = eventRepository.getOne(id);
+        for (Place place : eventEntity.getPlaces()) {
+            this.verifyPlaceAvailability(place, eventEntity);
+        }
 
+        try {
             eventEntity.setStartDate(eventUpdateDto.getStartDate());
             eventEntity.setEndDate(eventUpdateDto.getEndDate());
             eventEntity.setStartTime(eventUpdateDto.getStartTime());
@@ -113,10 +114,11 @@ public class EventService {
     }
 
     public void removeEvent(Long id) {
+        Event eventEntity = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
         try {
             this.eventRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event can't be deleted");
         }
@@ -231,7 +233,7 @@ public class EventService {
 
         for (Event e : eventsOfPlaces) {
             if (event.getStartDate().isAfter(e.getEndDate()) || event.getEndDate().isBefore(e.getStartDate())) {
-                return;
+                continue;
             }
 
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
