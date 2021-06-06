@@ -9,6 +9,7 @@ import com.project.event.entities.Attendee;
 import com.project.event.entities.Event;
 import com.project.event.entities.Place;
 import com.project.event.entities.Ticket;
+import com.project.event.entities.TicketType;
 import com.project.event.repositories.AdminRepository;
 import com.project.event.repositories.AttendeeRepository;
 import com.project.event.repositories.EventRepository;
@@ -171,6 +172,8 @@ public class EventService {
         Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
 
+        this.verifyTicketAvailability(eventEntity, ticketInsertDto);
+
         try {
             Double price = 0.0;
             Ticket ticket = new Ticket(ticketInsertDto.getTicketType(), Instant.now(), price, attendeeEntity,
@@ -244,6 +247,16 @@ public class EventService {
         }
     }
 
+    private void verifyTicketAvailability(Event eventEntity, TicketInsertDto ticketInsertDto) {
+        if (ticketInsertDto.getTicketType() == TicketType.PAID && eventEntity.getAmountPayedTickets() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Paid tickets for the event are already sold out.");
+        } else if (ticketInsertDto.getTicketType() == TicketType.FREE && eventEntity.getAmountFreeTickets() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Free tickets for the event are already sold out.");
+        }
+    }
+    
     private void verifyTicketExistence(Event event) {
         List<Ticket> tickets = event.getTickets();
 
