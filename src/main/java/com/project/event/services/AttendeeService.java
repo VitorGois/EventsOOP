@@ -54,7 +54,7 @@ public class AttendeeService {
     public AttendeeDTO updateAttendee(Long id, AttendeeUpdateDTO attendeeUpdateDTO) {
         Attendee attendeeEntity = attendeeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
-        
+
         this.verifyEmailExistence(attendeeUpdateDTO.getEmail());
 
         try {
@@ -68,7 +68,7 @@ public class AttendeeService {
     }
 
     public void removeAttendee(Long id) {
-        Attendee attendeeEntity = attendeeRepository.findById(id)
+        attendeeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee not found"));
 
         try {

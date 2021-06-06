@@ -95,24 +95,10 @@ public class Event implements Serializable {
     }
 
     public void addTicket(Ticket ticket) {
-        if (ticket.getType() == TicketType.PAID) {
-            ticket.setPrice(this.getPriceTicket());
-            this.amountPayedTickets -= 1;
-        } else {
-            this.amountFreeTickets -= 1;
-        }
-
         this.getTickets().add(ticket);
     }
 
-    public void removeTicket(Ticket ticket, Attendee attendee) {
-        if (ticket.getType() == TicketType.PAID) {
-            this.amountPayedTickets += 1;
-            attendee.setBalance(attendee.getBalance() + ticket.getPrice());
-        } else {
-            this.amountFreeTickets += 1;
-        }
-
+    public void removeTicket(Ticket ticket) {
         this.getTickets().remove(ticket);
     }
 

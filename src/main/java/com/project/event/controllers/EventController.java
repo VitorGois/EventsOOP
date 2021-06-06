@@ -5,6 +5,7 @@ import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
 import com.project.event.dtos.ticket.TicketInsertDto;
 import com.project.event.services.EventService;
+import com.project.event.services.TicketService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,16 +27,18 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private TicketService ticketService;
+
     @GetMapping()
     public ResponseEntity<Page<EventDto>> getEvents(
-        @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "6") Integer linesPerPage,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction,
             @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
             @RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "description", defaultValue = "") String description,
-            @RequestParam(value = "startDate", defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate
-            ) {
+            @RequestParam(value = "startDate", defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         Page<EventDto> eventList = this.eventService.readEventList(pageRequest, name, description);
         return ResponseEntity.ok(eventList);
@@ -83,14 +86,14 @@ public class EventController {
     @PostMapping("/{idEvent}/tickets")
     public ResponseEntity<EventDto> connectEventTicket(@PathVariable() Long idEvent,
             @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.eventService.purchaseTicket(idEvent, ticketInsertDto);
+        EventDto eventDto = this.ticketService.purchaseTicket(idEvent, ticketInsertDto);
         return ResponseEntity.ok(eventDto);
     }
 
     @DeleteMapping("/{idEvent}/tickets")
     public ResponseEntity<EventDto> disconnectEventTicket(@PathVariable() Long idEvent,
             @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.eventService.refundTicket(idEvent, ticketInsertDto);
+        EventDto eventDto = this.ticketService.refundTicket(idEvent, ticketInsertDto);
         return ResponseEntity.ok(eventDto);
     }
 

@@ -40,7 +40,7 @@ public class AdminService {
         }
     }
 
-    public AdminDto createAdmin(AdminInsertDto adminInsertDto) {                
+    public AdminDto createAdmin(AdminInsertDto adminInsertDto) {
         this.verifyEmailExistence(adminInsertDto.getEmail());
 
         try {
@@ -69,7 +69,7 @@ public class AdminService {
     }
 
     public void removeAdmin(Long id) {
-        Admin adminEntity = adminRepository.findById(id)
+        adminRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
         try {
