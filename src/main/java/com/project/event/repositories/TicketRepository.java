@@ -13,12 +13,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    @Query(
-            "SELECT t FROM Ticket t " +
-                    "WHERE " +
-                    "(LOWER(e.type) LIKE LOWER(CONCAT('%', :type, '%'))) AND " +
-                    "(LOWER(e.date) LIKE LOWER(CONCAT('%', :date, '%')))"
-    )
-    Page<Ticket> find(Pageable pageRequest, @Param("type") String type, @Param("date") Instant date);
-    Page<Ticket> find(Pageable pageRequest);
 }

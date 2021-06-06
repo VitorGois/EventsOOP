@@ -4,7 +4,9 @@ import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
 import com.project.event.dtos.ticket.TicketInsertDto;
+import com.project.event.dtos.ticket.TicketReadDTO;
 import com.project.event.services.EventService;
+import com.project.event.services.TicketService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+    @Autowired
+    private TicketService ticketService;
 
     @GetMapping()
     public ResponseEntity<Page<EventDto>> getEvents(
@@ -92,6 +96,12 @@ public class EventController {
             @RequestBody() TicketInsertDto ticketInsertDto) {
         EventDto eventDto = this.eventService.refundTicket(idEvent, ticketInsertDto);
         return ResponseEntity.ok(eventDto);
+    }
+
+    @GetMapping("/{idEvent}/tickets")
+    public ResponseEntity<TicketReadDTO> showEventTicket(@PathVariable() Long idEvent) {
+        TicketReadDTO tReadDto = this.ticketService.readTicketList(idEvent);
+        return ResponseEntity.ok(tReadDto);
     }
 
 }
