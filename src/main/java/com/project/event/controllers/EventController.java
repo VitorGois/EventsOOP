@@ -3,6 +3,7 @@ package com.project.event.controllers;
 import com.project.event.dtos.event.EventDto;
 import com.project.event.dtos.event.EventInsertDto;
 import com.project.event.dtos.event.EventUpdateDto;
+import com.project.event.dtos.ticket.TicketDTO;
 import com.project.event.dtos.ticket.TicketInsertDto;
 import com.project.event.services.EventService;
 import com.project.event.services.TicketService;
@@ -81,6 +82,12 @@ public class EventController {
     public ResponseEntity<EventDto> disconnectEventPlace(@PathVariable() Long idEvent, @PathVariable() Long idPlace) {
         EventDto eventDto = this.eventService.disassocEventPlace(idEvent, idPlace);
         return ResponseEntity.ok(eventDto);
+    }
+
+    @GetMapping("/{idEvent}/tickets")
+    public ResponseEntity<TicketDTO> getEventTickets(@PathVariable() Long idEvent) {
+        TicketDTO ticketDto = this.ticketService.readTicketList(idEvent);
+        return ResponseEntity.ok(ticketDto);
     }
 
     @PostMapping("/{idEvent}/tickets")

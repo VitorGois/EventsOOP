@@ -2,8 +2,12 @@ package com.project.event.services;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.project.event.dtos.event.EventDto;
+import com.project.event.dtos.ticket.TicketDTO;
+import com.project.event.dtos.ticket.TicketData;
 import com.project.event.dtos.ticket.TicketInsertDto;
 import com.project.event.entities.Attendee;
 import com.project.event.entities.Event;
@@ -27,6 +31,35 @@ public class TicketService {
 
     @Autowired
     private TicketRepository ticketRepository;
+
+    public TicketDTO readTicketList(Long idEvent) {
+        Event eventEntity = eventRepository.findById(idEvent)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        List<Ticket> ticketList = eventEntity.getTickets();
+        List<TicketData> ticketDataList = new ArrayList<>();
+
+        try {
+            Long paidSoldTickets = 0l;
+            Long freeSoldTickets = 0l;
+
+            for (Ticket ticket : ticketList) {
+                TicketData ticketData = new TicketData(ticket.getType(), ticket.getAttendee().getName());
+
+                ticketDataList.add(ticketData);
+
+                if (ticket.getType() == TicketType.PAID) {
+                    paidSoldTickets++;
+                } else {
+                    freeSoldTickets++;
+                }
+            }
+
+            return new TicketDTO(ticketDataList, eventEntity.getAmountPayedTickets(), eventEntity.getAmountFreeTickets(), paidSoldTickets, freeSoldTickets);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
+        }
+    }
 
     public EventDto purchaseTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
