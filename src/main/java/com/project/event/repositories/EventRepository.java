@@ -12,10 +12,12 @@ import org.springframework.stereotype.Repository;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query(
-            "SELECT e FROM Event e " +
+            "SELECT e FROM Event e JOIN e.places p " +
                     "WHERE " +
                     "(LOWER(e.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
-                    "(LOWER(e.description) LIKE LOWER(CONCAT('%', :description, '%')))"
+                    "(LOWER(e.description) LIKE LOWER(CONCAT('%', :description, '%'))) AND " +
+                    "(LOWER(p.address) LIKE LOWER(CONCAT('%', :address, '%'))) OR " +
+                    "(LOWER(p.name) LIKE LOWER(CONCAT('%', :address, '%')))"
     )
-    Page<Event> find(Pageable pageRequest, @Param("name") String name, @Param("description") String description);
+    Page<Event> find(Pageable pageRequest, @Param("name") String name, @Param("description") String description, @Param("address") String address);
 }

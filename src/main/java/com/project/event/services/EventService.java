@@ -37,9 +37,9 @@ public class EventService {
     @Autowired
     private PlaceRepository placeRepository;
 
-    public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description) {
+    public Page<EventDto> readEventList(PageRequest pageRequest, String name, String description, String address) {
         try {
-            Page<Event> eventList = this.eventRepository.find(pageRequest, name, description);
+            Page<Event> eventList = this.eventRepository.find(pageRequest, name, description, address);
             return eventList.map(event -> new EventDto(event));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
