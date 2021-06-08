@@ -23,7 +23,7 @@ Develop a system to control events.
 - [x] Create participating user CRUD
 - [x] Create place CRUD
 - [x] Create event CRUD
-- [ ] Create ticket CRUD
+- [x] Create ticket CRUD
 - [x] Validate business rules
 - [x] Insert mock data
 - [x] Handle application errors
@@ -37,13 +37,13 @@ Develop a system to control events.
 ## 🚀 Application Endpoints
 | **Endpoints**            | **Verbs Supported**       | **Description**                                                     | **Status**    |
 | :----------------------: | :-----------------------: | :-----------------------------------------------------------------: | :-----------: |
-| /admins                  | `GET, POST, DELETE e PUT` | Maintenance of administrator users                                  | *Done* |
-| /attendees               | `GET, POST, DELETE e PUT` | Maintenance of participating users                                  | *Done* |
-| /places                  | `GET, POST, DELETE e PUT` | Event venue maintenance                                             | *Done* |
-| /events                  | `GET, POST, DELETE e PUT` | Event maintenance                                                   | *Done* |
-| /events/{id}/places/{id} | `POST e DELETE`           | Associate or remove a location with an event                        | *Soon*        |
-| /events/{id}/tickets     | `GET`                     | Returns the list of tickets for an event, type and the participants | *Soon*        |
-| /events/{id}/tickets     | `POST e DELETE`           | Sell a ticket to an event and make the return                       | *Soon*        |
+| /admins                  | `GET, POST, DELETE e PUT` | Maintenance of administrator users                                  | *Done*        |
+| /attendees               | `GET, POST, DELETE e PUT` | Maintenance of participating users                                  | *Done*        |
+| /places                  | `GET, POST, DELETE e PUT` | Event venue maintenance                                             | *Done*        |
+| /events                  | `GET, POST, DELETE e PUT` | Event maintenance                                                   | *Done*        |
+| /events/{id}/places/{id} | `POST e DELETE`           | Associate or remove a location with an event                        | *Done*        |
+| /events/{id}/tickets     | `GET`                     | Returns the list of tickets for an event, type and the participants | *Done*        |
+| /events/{id}/tickets     | `POST e DELETE`           | Sell a ticket to an event and make the return                       | *Done*        |
 
 ## 🛎️JSON Body Examples (POST)
 ### 🕴️ Admin
