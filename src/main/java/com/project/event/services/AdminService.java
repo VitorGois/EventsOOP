@@ -81,7 +81,10 @@ public class AdminService {
 
     private void verifyEmailExistence(String email) {
         Optional<Admin> opAdmin = this.adminRepository.findByEmail(email);
-        opAdmin.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used"));
+        
+        if(opAdmin.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used");
+        }
     }
 
 }
