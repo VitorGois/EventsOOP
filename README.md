@@ -102,7 +102,7 @@ STATUS: 201 Created
   "address": "Barra da Tijuca - Rio de Janeiro/RJ"
 }
 ```
-### 🎫 Events
+### 😎 Events
 <b>Input data:</b>
 ```
 {
@@ -134,5 +134,33 @@ STATUS: 201 Created
   "amountFreeTickets": 150,
   "amountPayedTickets": 70000,
   "priceTicket": 525.0
+}
+```
+### 🎫 Tickets
+<b>Input data:</b>
+```
+{
+  "attendeeId": 2,
+  "ticketType": "FREE"
+}
+```
+<b>Expected response:</b>
+```
+STATUS: 201 Created
+{
+  "tickets": [
+    {
+      "type": "PAID",
+      "attendeeName": "Arthur Filipe Nelson Assunção"
+    },
+    {
+      "type": "FREE",
+      "attendeeName": "Nathan Manoel da Paz"
+    }
+  ],
+  "totalPaidTickets": 986,
+  "totalFreeTickets": 965,
+  "totalSoldPaidTickets": 1,
+  "totalSoldFreeTickets": 1
 }
 ```
