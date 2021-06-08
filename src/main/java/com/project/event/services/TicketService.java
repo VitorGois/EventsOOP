@@ -63,7 +63,7 @@ public class TicketService {
         }
     }
 
-    public EventDto purchaseTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public TicketDTO purchaseTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         Attendee attendeeEntity = this.attendeeRepository.findById(ticketInsertDto.getAttendeeId())
@@ -81,13 +81,13 @@ public class TicketService {
             eventEntity = this.eventRepository.save(eventEntity);
             this.ticketRepository.save(ticket);
 
-            return new EventDto(eventEntity);
+            return this.readTicketList(idEvent);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error confirming presence at event.");
         }
     }
 
-    public EventDto refundTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
+    public TicketDTO refundTicket(Long idEvent, TicketInsertDto ticketInsertDto) {
         Event eventEntity = this.eventRepository.findById(idEvent)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
@@ -113,7 +113,7 @@ public class TicketService {
             eventEntity = this.eventRepository.save(eventEntity);
             this.ticketRepository.delete(ticketEntity);
 
-            return new EventDto(eventEntity);
+            return this.readTicketList(idEvent);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error returning ticket.");
         }
