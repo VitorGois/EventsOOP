@@ -6,7 +6,6 @@ import com.project.event.dtos.admin.AdminUpdateDto;
 import com.project.event.entities.Admin;
 import com.project.event.repositories.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class AdminService {
@@ -33,19 +30,20 @@ public class AdminService {
     }
 
     public AdminDto readAdminById(Long id) {
+        Admin adminEntity = adminRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
+
         try {
-            Admin adminEntity = adminRepository.getOne(id);
             return new AdminDto(adminEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error loading data from database");
         }
     }
 
     public AdminDto createAdmin(AdminInsertDto adminInsertDto) {
+        this.verifyEmailExistence(adminInsertDto.getEmail());
+
         try {
-            this.verifyEmailExistence(adminInsertDto.getEmail());
             Admin adminEntity = new Admin(adminInsertDto);
             adminEntity = this.adminRepository.save(adminEntity);
             return new AdminDto(adminEntity);
@@ -55,26 +53,27 @@ public class AdminService {
     }
 
     public AdminDto updateAdmin(Long id, AdminUpdateDto adminUpdateDto) {
-        try {
-            this.verifyEmailExistence(adminUpdateDto.getEmail());
-            Admin adminEntity = this.adminRepository.getOne(id);
+        Admin adminEntity = adminRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
+        this.verifyEmailExistence(adminUpdateDto.getEmail());
+
+        try {
             adminEntity.setEmail(adminUpdateDto.getEmail());
             adminEntity = this.adminRepository.save(adminEntity);
 
             return new AdminDto(adminEntity);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error updating data");
         }
     }
 
     public void removeAdmin(Long id) {
+        adminRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
+
         try {
             this.adminRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This admin can't be deleted");
         }

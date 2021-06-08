@@ -15,20 +15,6 @@ import java.time.Instant;
 @Entity
 public class Ticket implements Serializable {
 
-    enum TicketType {
-        FREE('F'), PAID('P');
-
-        private char value;
-
-        TicketType(char value) {
-            this.value = value;
-        }
-
-        public char getValue() {
-            return this.value;
-        }
-    }
-
     private static final long serialVersionUID = 1L;
 
     @Setter(AccessLevel.NONE)
@@ -47,10 +33,12 @@ public class Ticket implements Serializable {
     @NonNull
     private Double price;
 
+    @NonNull
     @ManyToOne
     @JoinColumn(name = "attendee_id")
     private Attendee attendee;
 
+    @NonNull
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
