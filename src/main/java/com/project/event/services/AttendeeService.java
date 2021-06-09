@@ -41,8 +41,9 @@ public class AttendeeService {
     }
 
     public AttendeeDTO createAttendee(AttendeeInsertDTO attendeeInsertDTO) {
+        this.verifyEmailExistence(attendeeInsertDTO.getEmail());
+
         try {
-            this.verifyEmailExistence(attendeeInsertDTO.getEmail());
             Attendee attendeeEntity = new Attendee(attendeeInsertDTO);
             attendeeEntity = this.attendeeRepository.save(attendeeEntity);
             return new AttendeeDTO(attendeeEntity);
@@ -80,7 +81,10 @@ public class AttendeeService {
 
     private void verifyEmailExistence(String email) {
         Optional<Attendee> opAttendee = this.attendeeRepository.findByEmail(email);
-        opAttendee.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used"));
+
+        if(opAttendee.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail already used");
+        }
     }
 
 }
