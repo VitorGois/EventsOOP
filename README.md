@@ -164,3 +164,10 @@ STATUS: 201 Created
   "totalSoldFreeTickets": 1
 }
 ```
+
+## 🌙Insomnia
+If you want to test the app, you can use the insomnia collection file, which contains all the requests you can make.
+[Collection](https://github.com/VitorGois/EventsOOP/blob/master/insomnia_collection.json)
+
+---
+<p align="center">Thanks! 🤘
