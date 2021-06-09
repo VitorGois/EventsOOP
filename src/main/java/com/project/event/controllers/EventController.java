@@ -92,17 +92,17 @@ public class EventController {
     }
 
     @PostMapping("/{idEvent}/tickets")
-    public ResponseEntity<EventDto> connectEventTicket(@PathVariable() Long idEvent,
+    public ResponseEntity<TicketDTO> connectEventTicket(@PathVariable() Long idEvent,
             @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.ticketService.purchaseTicket(idEvent, ticketInsertDto);
-        return ResponseEntity.ok(eventDto);
+        TicketDTO ticketDto = this.ticketService.purchaseTicket(idEvent, ticketInsertDto);
+        return ResponseEntity.ok(ticketDto);
     }
 
     @DeleteMapping("/{idEvent}/tickets")
-    public ResponseEntity<EventDto> disconnectEventTicket(@PathVariable() Long idEvent,
+    public ResponseEntity<TicketDTO> disconnectEventTicket(@PathVariable() Long idEvent,
             @RequestBody() TicketInsertDto ticketInsertDto) {
-        EventDto eventDto = this.ticketService.refundTicket(idEvent, ticketInsertDto);
-        return ResponseEntity.ok(eventDto);
+        TicketDTO ticketDto = this.ticketService.refundTicket(idEvent, ticketInsertDto);
+        return ResponseEntity.ok(ticketDto);
     }
 
 }
