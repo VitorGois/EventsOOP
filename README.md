@@ -1,5 +1,11 @@
 # EventsOOP
 
+<p align="center">
+	⚠️
+	<br><b>Because we are using the free version of Heroku, it can delete the data saved for this application. In addition to occurring instabilities/errors which may not occur running locally.</b><br>
+	⚠️
+</p>
+
 ### Developers
 🧑🏽 [Otavio Cordeiro de Freitas](https://github.com/CordeiroOtavio "Otavio's GitHub") - 190702<br/>
 👦🏻 [Vitor Joaquim de Carvalho Gois](https://github.com/VitorGois "Vitor's GitHub") - 190810
